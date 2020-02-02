@@ -14,12 +14,12 @@ set -e
 $SUDO echo
 
 ## DEPENDENCES ##
-ZLIB='http://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz'
-EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2'
-C_ARES='http://c-ares.haxx.se/download/c-ares-1.15.0.tar.gz'
-OPENSSL='http://www.openssl.org/source/openssl-1.1.1d.tar.gz'
-SQLITE3='https://sqlite.org/2019/sqlite-autoconf-3300100.tar.gz'
-LIBSSH2='https://www.libssh2.org/download/libssh2-1.9.0.tar.gz'
+#ZLIB='https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz'
+#EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2'
+#C_ARES='https://c-ares.haxx.se/download/c-ares-1.15.0.tar.gz'
+#OPENSSL='https://www.openssl.org/source/openssl-1.1.1d.tar.gz'
+#SQLITE3='https://sqlite.org/2019/sqlite-autoconf-3300100.tar.gz'
+#LIBSSH2='https://www.libssh2.org/download/libssh2-1.9.0.tar.gz'
 
 ## CONFIG ##
 ARCH="`uname -m`"
@@ -41,7 +41,7 @@ export LD="ld"
 DEBIAN_INSTALL(){
     $SUDO apt-get update
     $SUDO apt-get -y install build-essential git curl ca-certificates \
-        libxml2-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool pkg-config
+        libxml2-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool pkg-config zip
 }
 
 FEDORA_INSTALL(){
@@ -136,7 +136,7 @@ LIBSSH2_BUILD(){
     make install
 }
 
-ARIA2_SRC(){
+ARIA2_SOURCE(){
     [ -e $BUILD_DIR/aria2 ] && {
         cd $BUILD_DIR/aria2
         git reset --hard origin || git reset --hard
@@ -150,14 +150,28 @@ ARIA2_SRC(){
 }
 
 ARIA2_RELEASE(){
+    [ -e "$ARIA2_VER" ] || \
+        ARIA2_VER=$(curl -fsSL https://api.github.com/repos/aria2/aria2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
     mkdir -p $BUILD_DIR/aria2 && cd $BUILD_DIR/aria2
-    curl -s 'https://api.github.com/repos/aria2/aria2/releases/latest' | \
-        grep 'browser_download_url.*[0-9]\.tar\.xz' | sed -e 's/^[[:space:]]*//' | \
-        cut -d ' ' -f 2 | xargs -I % curl -Ls -o - '%' | tar Jxvf - --strip-components=1
+    ARIA2_VER=${ARIA2_VER#*-}
+    curl -Ls -o - "https://github.com/aria2/aria2/releases/download/release-${ARIA2_VER}/aria2-${ARIA2_VER}.tar.xz" | \
+        tar Jxvf - --strip-components=1
 }
 
 ARIA2_BUILD(){
     ARIA2_RELEASE || ARIA2_SOURCE
+    echo "修改最大连接数TEXT_MAX_CONNECTION_PER_SERVER"
+    sed -i 's/1", 1, 16/128", 1, -1/' src/OptionHandlerFactory.cc
+    echo "修改PREF_MIN_SPLIT_SIZE, TEXT_MIN_SPLIT_SIZE"
+    sed -i 's/"20M", 1_m, 1_g/"4K", 1_k, 1_g/' src/OptionHandlerFactory.cc
+    echo "修改TEXT_CONNECT_TIMEOUT"
+    sed -i 's/TEXT_CONNECT_TIMEOUT, "60", 1, 600/TEXT_CONNECT_TIMEOUT, "30", 1, 600/' src/OptionHandlerFactory.cc
+    echo "修改TEXT_PIECE_LENGTH"
+    sed -i 's/TEXT_PIECE_LENGTH, "1M", 1_m/TEXT_PIECE_LENGTH, "4k", 1_k/' src/OptionHandlerFactory.cc
+    echo "修改TEXT_RETRY_WAIT"
+    sed -i 's/TEXT_RETRY_WAIT, "0", 0, 600/TEXT_RETRY_WAIT, "2", 0, 600/' src/OptionHandlerFactory.cc
+    echo "修改PREF_SPLIT, TEXT_SPLIT"
+    sed -i 's/PREF_SPLIT, TEXT_SPLIT, "5"/PREF_SPLIT, TEXT_SPLIT, "8"/' src/OptionHandlerFactory.cc
     ./configure \
         --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
         --without-libxml2 \
@@ -168,6 +182,8 @@ ARIA2_BUILD(){
         --without-libgmp \
         --with-libssh2 \
         --with-sqlite3 \
+        --with-libexpat \
+        --with-libz \
         --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
         ARIA2_STATIC=yes \
         --enable-shared=no
@@ -180,8 +196,7 @@ ARIA2_PACKAGE(){
     cd $BUILD_DIR/aria2/src
     strip aria2c
     mkdir -p $OUTPUT_DIR
-    tar Jcvf $OUTPUT_DIR/aria2-$ARIA2_VER-static-linux-$dpkgARCH.tar.xz aria2c
-    tar zcvf $OUTPUT_DIR/aria2-$ARIA2_VER-static-linux-$dpkgARCH.tar.gz aria2c
+    mv aria2c $OUTPUT_DIR
 }
 
 ARIA2_INSTALL(){

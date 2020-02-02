@@ -1,0 +1,110 @@
+name: Aria2 Build
+on:
+#  release:
+#    types: [published]
+  push:
+    branches:
+      - master
+#    paths:
+#      - 'diy.sh'
+  schedule:
+    - cron: '30 0 1 * *'
+#  watch:
+#    types: [started]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        PROFILE: [amd64, arm64, armhf, i386, win64]
+        include:
+        - PROFILE: amd64
+          BUILD_SCRIPT: aria2-gnu-linux-build.sh
+        - PROFILE: arm64
+          BUILD_SCRIPT: aria2-gnu-linux-cross-build-arm64.sh
+        - PROFILE: armhf
+          BUILD_SCRIPT: aria2-gnu-linux-cross-build-armhf.sh
+        - PROFILE: i386
+          BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
+        - PROFILE: win64
+          BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Build
+      env:
+        DOCKER_BUILDKIT: 1
+        BUILDER_IMAGE: debian:testing
+        PROFILE: ${{ matrix.PROFILE }}
+        BUILD_SCRIPT: ${{ matrix.BUILD_SCRIPT }}
+        ZLIB: https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz
+        EXPAT: https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2
+        C_ARES: https://c-ares.haxx.se/download/c-ares-1.15.0.tar.gz
+        OPENSSL: https://www.openssl.org/source/openssl-1.1.1d.tar.gz
+        SQLITE3: https://sqlite.org/2019/sqlite-autoconf-3300100.tar.gz
+        LIBSSH2: https://www.libssh2.org/download/libssh2-1.9.0.tar.gz
+        GITHUB_REPO: jsda/aria2-builder
+      run: |
+        ARIA2_VER=$(curl -fsSL https://api.github.com/repos/aria2/aria2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')
+        echo "======================="
+        echo "Aria2 $ARIA2_VER"
+        echo "$PROFILE"
+        echo "$BUILD_SCRIPT"
+        echo "======================="
+        ## DEPENDENCES ##
+        echo "ZLIB=$ZLIB"
+        echo "EXPAT=$EXPAT"
+        echo "C_ARES=$C_ARES"
+        echo "OPENSSL=$OPENSSL"
+        echo "SQLITE3=$SQLITE3"
+        echo "LIBSSH2=$LIBSSH2"
+        echo "GITHUB_REPO=$GITHUB_REPO"
+        echo "::set-env name=GITHUB_REPO::$GITHUB_REPO"
+        echo "======================="
+        echo "dockerfiles也要加入相应变量"
+        docker build \
+          --build-arg BUILDER_IMAGE \
+          --build-arg BUILD_SCRIPT \
+          --build-arg ARIA2_VER \
+          --build-arg ZLIB \
+          --build-arg EXPAT \
+          --build-arg C_ARES \
+          --build-arg OPENSSL \
+          --build-arg SQLITE3 \
+          --build-arg LIBSSH2 \
+          --platform=local \
+          -o ./output .
+        cd output
+        TAG=$ARIA2_VER-$(date "+%Y%m%d")
+        echo "::set-env name=TAG::$TAG"
+        echo "::set-env name=PROFILE::$PROFILE"
+        echo "$(sha512sum aria2c*)" > HASH.txt
+        zip -9 -r aria2-$ARIA2_VER-$PROFILE.zip aria2c* HASH.txt
+        echo -e "## ARIA2 HASH SHA512\n$(cat HASH.txt)" > README.md
+        rm -rf aria2c* HASH.txt
+        echo "======================="
+        echo "======================="
+        echo "Space usage:"
+        echo "======================="
+        df -h
+        echo "======================="
+        echo "ARIA2 HASH SHA512"
+        echo "======================="
+        echo "$(cat README.md)"
+        echo "======================="
+
+    - name: Upload
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      run: |
+        cd output
+        git init
+        git config user.name "actions"
+        git config user.email "actions@github.com"
+        git add .
+        git commit -m "$TAG"
+        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:$PROFILE

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #===========================================================
 # https://github.com/P3TERX/aria2-builder
-# File name: aria2-gnu-linux-cross-build-i386.sh
-# Description: Cross build Aria2 i386 version
+# File name: aria2-gnu-linux-cross-build-win64.sh
+# Description: Build aria2 on the target architecture
 # System Required: Debian & Ubuntu & Fedora & Arch Linux
 # Lisence: GPLv3
 # Version: 1.1
@@ -22,13 +22,12 @@ $SUDO echo
 #LIBSSH2='https://www.libssh2.org/download/libssh2-1.9.0.tar.gz'
 
 ## CONFIG ##
-ARCH="i386"
-HOST="i686-linux-gnu"
-OPENSSL_ARCH="linux-elf"
+HOST="x86_64-w64-mingw32"
+OPENSSL_ARCH="mingw64"
 BUILD_DIR="/tmp"
 OUTPUT_DIR="$HOME/output"
-PREFIX="$BUILD_DIR/aria2-cross-build-libs-$ARCH"
-ARIA2_PREFIX=$HOME/aria2-local
+PREFIX="$BUILD_DIR/aria2-cross-build-libs-$HOST"
+ARIA2_PREFIX="/usr/local"
 export CURL_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
 export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
 export LD_LIBRARY_PATH="$PREFIX/lib"
@@ -41,19 +40,19 @@ export LD="$HOST-ld"
 
 DEBIAN_INSTALL(){
     $SUDO apt-get update
-    $SUDO apt-get -y install build-essential git curl ca-certificates \
-        libxml2-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool pkg-config \
-        gcc-$HOST g++-$HOST zip
+    $SUDO apt-get -y install build-essential libgnutls28-dev nettle-dev libgmp-dev \
+    libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config \
+    libcppunit-dev autoconf automake autotools-dev autopoint libtool git gcc g++ \
+    quilt openssl libgcrypt-dev libssl-dev gcc-mingw-w64 g++-mingw-w64 zip
 }
 
 FEDORA_INSTALL(){
-    $SUDO dnf install -y make kernel-devel git curl ca-certificates bzip2 xz findutils \
-        libxml2-devel cppunit autoconf automake gettext-devel libtool pkg-config dpkg \
-        gcc-$HOST gcc-c++-$HOST
+    $SUDO dnf install -y make gcc gcc-c++ kernel-devel libgcrypt-devel git curl ca-certificates bzip2 xz findutils \
+        libxml2-devel cppunit autoconf automake gettext-devel libtool pkg-config dpkg
 }
 
 ARCH_INSTALL(){
-    $SUDO pacman -Syu --noconfirm base-devel git dpkg $HOST-gcc
+    $SUDO pacman -Syu --noconfirm base-devel git dpkg
 }
 
 TOOLCHAIN(){
@@ -84,11 +83,10 @@ EXPAT_BUILD(){
     curl -Ls -o - "$EXPAT" | \
         tar jxvf - --strip-components=1
     ./configure \
-        --host=$HOST \
-        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
         --prefix=$PREFIX \
-        --enable-static=yes \
-        --enable-shared=no
+        --host=$HOST \
+        --enable-static \
+        --enable-shared
     make install
 }
 
@@ -97,10 +95,10 @@ C_ARES_BUILD(){
     curl -Ls -o - "$C_ARES" | \
         tar zxvf - --strip-components=1
     ./configure \
-        --host=$HOST \
-        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
         --prefix=$PREFIX \
-        --enable-static --disable-shared
+        --host=$HOST \
+        --enable-static \
+        --disable-shared
     make install
 }
 
@@ -114,7 +112,7 @@ OPENSSL_BUILD(){
         $OPENSSL_ARCH \
         no-asm \
         shared
-    make install
+    make install -i
 }
 
 SQLITE3_BUILD(){
@@ -122,9 +120,8 @@ SQLITE3_BUILD(){
     curl -Ls -o - "$SQLITE3" | \
         tar zxvf - --strip-components=1
     ./configure \
-        --host=$HOST \
-        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
         --prefix=$PREFIX \
+        --host=$HOST \
         --enable-static \
         --enable-shared
     make install
@@ -136,10 +133,10 @@ LIBSSH2_BUILD(){
         tar zxvf - --strip-components=1
     rm -rf $PREFIX/lib/pkgconfig/libssh2.pc
     ./configure \
-        --host=$HOST \
         --prefix=$PREFIX \
+        --host=$HOST \
         --enable-static \
-        --disable-shared \
+        --disable-shared
         CPPFLAGS="-I$PREFIX/include" \
         LDFLAGS="-L$PREFIX/lib"
     make install
@@ -183,33 +180,37 @@ ARIA2_BUILD(){
     sed -i 's/PREF_SPLIT, TEXT_SPLIT, "5"/PREF_SPLIT, TEXT_SPLIT, "8"/' src/OptionHandlerFactory.cc
     ./configure \
         --host=$HOST \
-        --prefix=${ARIA2_PREFIX:-'/usr'} \
-        --without-libxml2 \
-        --without-libgcrypt \
-        --with-openssl \
-        --without-libnettle \
+        --prefix=$PREFIX \
+        --without-included-gettext \
+        --disable-nls \
+        --with-libcares \
         --without-gnutls \
-        --without-libgmp \
-        --with-libssh2 \
+        --without-wintls \
+        --with-openssl \
         --with-sqlite3 \
+        --without-libxml2 \
         --with-libexpat \
         --with-libz \
-        --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
+        --without-libgmp \
+        --with-libssh2 \
+        --without-libgcrypt \
+        --without-libnettle \
+        --with-cppunit-prefix=$PREFIX \
         ARIA2_STATIC=yes \
-        --enable-shared=no
+        CPPFLAGS="-I$PREFIX/include" \
+        LDFLAGS="-L$PREFIX/lib" \
+        PKG_CONFIG="/usr/bin/pkg-config" \
+        PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
     make
 }
 
 ARIA2_PACKAGE(){
+    ARIA2_VER=$(curl --silent "https://api.github.com/repos/aria2/aria2/releases/latest" | grep '"tag_name":' | sed -E 's/.*"release-([^"]+)".*/\1/')
+    dpkgARCH=64bit
     cd $BUILD_DIR/aria2/src
-    $HOST-strip aria2c
+    strip aria2c.exe
     mkdir -p $OUTPUT_DIR
-    mv aria2c $OUTPUT_DIR
-}
-
-ARIA2_INSTALL(){
-    cd $BUILD_DIR/aria2
-    make install-strip
+    mv aria2c.exe $OUTPUT_DIR
 }
 
 CLEANUP_SRC(){
