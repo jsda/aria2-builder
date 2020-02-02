@@ -89,3 +89,4 @@ DOCKER_BUILDKIT=1 docker build \
 ## Licence
 
 [![GPLv3](https://www.gnu.org/graphics/gplv3-127x51.png)](https://github.com/P3TERX/aria2-builder/blob/master/LICENSE)
+
