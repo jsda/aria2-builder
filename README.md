@@ -1,23 +1,16 @@
 # Aria2 Builder
 
-[![LICENSE](https://img.shields.io/github/license/P3TERX/aria2-builder?style=flat-square)](https://github.com/P3TERX/aria2-builder/blob/master/LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/P3TERX/aria2-builder.svg?style=flat-square&label=Stars&logo=github)](https://github.com/P3TERX/aria2-builder/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/P3TERX/aria2-builder.svg?style=flat-square&label=Forks&logo=github)](https://github.com/P3TERX/aria2-builder/fork)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/P3TERX/docker-aria2-pro/Docker%20images%20build%20test?label=Actions&logo=github&style=flat-square)
-
 Aria2 static builds for GNU/Linux
 
 ## Downloads
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/P3TERX/aria2-builder?style=for-the-badge)](https://github.com/P3TERX/aria2-builder/releases/latest)
+![Aria2 Build](https://github.com/jsda/aria2-builder/workflows/Aria2%20Build/badge.svg?branch=master)
 
-## Installing
-
-### Automatic script
-```shell
-curl -fsSL git.io/aria2c.sh | bash
-wget -qO- git.io/aria2c.sh | bash
-```
+* [Aria2 amd64](https://github.com/jsda/aria2-builder/tree/amd64/)
+* [Aria2 arm64](https://github.com/jsda/aria2-builder/tree/arm64/)
+* [Aria2 armhf](https://github.com/jsda/aria2-builder/tree/armhf/)
+* [Aria2 i386](https://github.com/jsda/aria2-builder/tree/i386/)
+* [Aria2 win64](https://github.com/jsda/aria2-builder/tree/win64/)
 
 ### Manual installation
 ```shell
@@ -56,7 +49,7 @@ DOCKER_BUILDKIT=1 docker build \
 
 **`dest`** can define the output directory. If there are no changes, two archive files will be generated in the current directory after the work is completed.
 ```
-$ ls -l 
+$ ls -l
 -rw-r--r-- 1 p3terx p3terx 3744106 Jan 17 20:24 aria2-1.35.0-static-linux-amd64.tar.gz
 -rw-r--r-- 1 p3terx p3terx 2931344 Jan 17 20:24 aria2-1.35.0-static-linux-amd64.tar.xz
 ```
