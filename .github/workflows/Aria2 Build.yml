@@ -2,9 +2,9 @@ name: Aria2 Build
 on:
 #  release:
 #    types: [published]
-  push:
-    branches:
-      - master
+#  push:
+#    branches:
+#      - master
 #    paths:
 #      - 'diy.sh'
   schedule:
