@@ -1,14 +1,14 @@
 name: Aria2 Build
 on:
-#  release:
-#    types: [published]
+  release:
+    types: [published]
 #  push:
 #    branches:
 #      - master
 #    paths:
 #      - 'diy.sh'
-  schedule:
-    - cron: '30 0 1 * *'
+#  schedule:
+#    - cron: '30 0 1 * *'
 #  watch:
 #    types: [started]
 
@@ -42,26 +42,30 @@ jobs:
         PROFILE: ${{ matrix.PROFILE }}
         BUILD_SCRIPT: ${{ matrix.BUILD_SCRIPT }}
         ZLIB: https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz
-        EXPAT: https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2
-        C_ARES: https://c-ares.haxx.se/download/c-ares-1.15.0.tar.gz
-        OPENSSL: https://www.openssl.org/source/openssl-1.1.1d.tar.gz
-        SQLITE3: https://sqlite.org/2019/sqlite-autoconf-3300100.tar.gz
-        LIBSSH2: https://www.libssh2.org/download/libssh2-1.9.0.tar.gz
         GITHUB_REPO: jsda/aria2-builder
       run: |
-        ARIA2_VER=$(curl -fsSL https://api.github.com/repos/aria2/aria2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')
+        getversion(){
+        curl -fsSL https://api.github.com/repos/$1/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
+        }
+        echo "======================="
+        ARIA2_VER=$(getversion aria2/aria2)
+        C_ARES=https://github.com/c-ares/c-ares/releases/download/$(getversion c-ares/c-ares)/$(echo "$(getversion c-ares/c-ares)" | head -n 1 | sed 's/_/./g' | sed 's/ca/c-a/g').tar.gz
+        EXPAT=https://github.com/libexpat/libexpat/releases/download/$(getversion libexpat/libexpat)/expat-$(echo "$(getversion libexpat/libexpat)" | head -n 1 | sed 's/_/./g' | sed 's/R.//g').tar.bz2
+        LIBSSH2=https://github.com/libssh2/libssh2/releases/download/$(getversion libssh2/libssh2)/$(getversion libssh2/libssh2).tar.gz
+        OPENSSL=https://www.openssl.org/source/$(curl -fsSL https://www.openssl.org/source/ | grep -o '"openssl-[0-9].*.tar.gz"' | head -n 1 | sed 's/"//g')
+        SQLITE3=https://sqlite.org/$(curl -fsSL https://sqlite.org/download.html | grep -o '..../sqlite-autoconf-.*.tar.gz' | head -n 1)
         echo "======================="
         echo "Aria2 $ARIA2_VER"
         echo "$PROFILE"
         echo "$BUILD_SCRIPT"
         echo "======================="
         ## DEPENDENCES ##
-        echo "ZLIB=$ZLIB"
-        echo "EXPAT=$EXPAT"
         echo "C_ARES=$C_ARES"
+        echo "EXPAT=$EXPAT"
+        echo "LIBSSH2=$LIBSSH2"
         echo "OPENSSL=$OPENSSL"
         echo "SQLITE3=$SQLITE3"
-        echo "LIBSSH2=$LIBSSH2"
+        echo "ZLIB=$ZLIB"
         echo "GITHUB_REPO=$GITHUB_REPO"
         echo "::set-env name=GITHUB_REPO::$GITHUB_REPO"
         echo "======================="
@@ -82,22 +86,22 @@ jobs:
         TAG=$ARIA2_VER-$(date "+%Y%m%d")
         echo "::set-env name=TAG::$TAG"
         echo "::set-env name=PROFILE::$PROFILE"
-        echo "$(sha512sum aria2c*)" > HASH.txt
-        zip -9 -r aria2-$ARIA2_VER-$PROFILE.zip aria2c* HASH.txt
-        echo -e "## ARIA2 HASH SHA512\n$(cat HASH.txt)" > README.md
-        rm -rf aria2c* HASH.txt
+        echo "## ARIA2 HASH SHA512" > README.md
+        echo "$(sha512sum aria2c*)" >> README.md
+        sed -i "s/aria2c*/aria2-$PROFILE/g" README.md
+        zip -9 -r aria2-$ARIA2_VER-$PROFILE.zip aria2c* README.md
+        rm -rf aria2c*
         echo "======================="
         echo "======================="
         echo "Space usage:"
         echo "======================="
         df -h
         echo "======================="
-        echo "ARIA2 HASH SHA512"
-        echo "======================="
         echo "$(cat README.md)"
         echo "======================="
 
     - name: Upload
+      if: success()
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
