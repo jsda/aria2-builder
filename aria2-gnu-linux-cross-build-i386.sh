@@ -110,7 +110,7 @@ OPENSSL_BUILD() {
         $OPENSSL_ARCH \
         no-asm \
         shared
-    make install -j$(nproc)
+    make install
 }
 
 SQLITE3_BUILD() {
