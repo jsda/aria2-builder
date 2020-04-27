@@ -24,7 +24,7 @@ $SUDO echo
 ## CONFIG ##
 ARCH="i386"
 HOST="i686-linux-gnu"
-OPENSSL_ARCH="linux-elf"
+OPENSSL_ARCH="linux-x86"
 BUILD_DIR="/tmp"
 OUTPUT_DIR="$HOME/output"
 PREFIX="$BUILD_DIR/aria2-cross-build-libs-$ARCH"
@@ -39,24 +39,24 @@ export RANLIB="$HOST-ranlib"
 export AR="$HOST-ar"
 export LD="$HOST-ld"
 
-DEBIAN_INSTALL(){
+DEBIAN_INSTALL() {
     $SUDO apt-get update
     $SUDO apt-get -y install build-essential git curl ca-certificates \
         libxml2-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool pkg-config \
         gcc-$HOST g++-$HOST zip
 }
 
-FEDORA_INSTALL(){
+FEDORA_INSTALL() {
     $SUDO dnf install -y make kernel-devel git curl ca-certificates bzip2 xz findutils \
         libxml2-devel cppunit autoconf automake gettext-devel libtool pkg-config dpkg \
         gcc-$HOST gcc-c++-$HOST
 }
 
-ARCH_INSTALL(){
+ARCH_INSTALL() {
     $SUDO pacman -Syu --noconfirm base-devel git dpkg $HOST-gcc
 }
 
-TOOLCHAIN(){
+TOOLCHAIN() {
     if [ -x "$(command -v apt-get)" ]; then
         DEBIAN_INSTALL
     elif [ -x "$(command -v dnf)" ]; then
@@ -69,45 +69,41 @@ TOOLCHAIN(){
     fi
 }
 
-ZLIB_BUILD(){
+ZLIB_BUILD() {
     mkdir -p $BUILD_DIR/zlib && cd $BUILD_DIR/zlib
-    curl -Ls -o - "$ZLIB" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$ZLIB" | tar zxvf - --strip-components=1
     ./configure \
         --prefix=$PREFIX \
         --static
     make install
 }
 
-EXPAT_BUILD(){
+EXPAT_BUILD() {
     mkdir -p $BUILD_DIR/expat && cd $BUILD_DIR/expat
-    curl -Ls -o - "$EXPAT" | \
-        tar jxvf - --strip-components=1
+    curl -Ls -o - "$EXPAT" | tar jxvf - --strip-components=1
     ./configure \
         --host=$HOST \
-        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
         --prefix=$PREFIX \
         --enable-static=yes \
         --enable-shared=no
     make install
 }
 
-C_ARES_BUILD(){
+C_ARES_BUILD() {
     mkdir -p $BUILD_DIR/c-ares && cd $BUILD_DIR/c-ares
-    curl -Ls -o - "$C_ARES" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$C_ARES" | tar zxvf - --strip-components=1
     ./configure \
         --host=$HOST \
-        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
         --prefix=$PREFIX \
         --enable-static --disable-shared
     make install
 }
 
-OPENSSL_BUILD(){
+OPENSSL_BUILD() {
     mkdir -p $BUILD_DIR/openssl && cd $BUILD_DIR/openssl
-    curl -Ls -o - "$OPENSSL" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$OPENSSL" | tar zxvf - --strip-components=1
     ./Configure \
         --prefix=$PREFIX \
         --openssldir=ssl \
@@ -117,23 +113,21 @@ OPENSSL_BUILD(){
     make install
 }
 
-SQLITE3_BUILD(){
+SQLITE3_BUILD() {
     mkdir -p $BUILD_DIR/sqlite3 && cd $BUILD_DIR/sqlite3
-    curl -Ls -o - "$SQLITE3" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$SQLITE3" | tar zxvf - --strip-components=1
     ./configure \
         --host=$HOST \
-        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
         --prefix=$PREFIX \
         --enable-static \
         --enable-shared
     make install
 }
 
-LIBSSH2_BUILD(){
+LIBSSH2_BUILD() {
     mkdir -p $BUILD_DIR/libssh2 && cd $BUILD_DIR/libssh2
-    curl -Ls -o - "$LIBSSH2" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$LIBSSH2" | tar zxvf - --strip-components=1
     rm -rf $PREFIX/lib/pkgconfig/libssh2.pc
     ./configure \
         --host=$HOST \
@@ -145,7 +139,7 @@ LIBSSH2_BUILD(){
     make install
 }
 
-ARIA2_SOURCE(){
+ARIA2_SOURCE() {
     [ -e $BUILD_DIR/aria2 ] && {
         cd $BUILD_DIR/aria2
         git reset --hard origin || git reset --hard
@@ -158,16 +152,16 @@ ARIA2_SOURCE(){
     $ARIA2_VER=master
 }
 
-ARIA2_RELEASE(){
-    [ -e "$ARIA2_VER" ] || \
+ARIA2_RELEASE() {
+    [ -e "$ARIA2_VER" ] ||
         ARIA2_VER=$(curl -fsSL https://api.github.com/repos/aria2/aria2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
     mkdir -p $BUILD_DIR/aria2 && cd $BUILD_DIR/aria2
     ARIA2_VER=${ARIA2_VER#*-}
-    curl -Ls -o - "https://github.com/aria2/aria2/releases/download/release-${ARIA2_VER}/aria2-${ARIA2_VER}.tar.xz" | \
+    curl -Ls -o - "https://github.com/aria2/aria2/releases/download/release-${ARIA2_VER}/aria2-${ARIA2_VER}.tar.xz" |
         tar Jxvf - --strip-components=1
 }
 
-ARIA2_BUILD(){
+ARIA2_BUILD() {
     ARIA2_RELEASE || ARIA2_SOURCE
     echo "修改最大连接数TEXT_MAX_CONNECTION_PER_SERVER"
     sed -i 's/1", 1, 16/128", 1, -1/' src/OptionHandlerFactory.cc
@@ -200,19 +194,19 @@ ARIA2_BUILD(){
     make
 }
 
-ARIA2_PACKAGE(){
+ARIA2_PACKAGE() {
     cd $BUILD_DIR/aria2/src
     $HOST-strip aria2c
     mkdir -p $OUTPUT_DIR
     mv aria2c $OUTPUT_DIR
 }
 
-ARIA2_INSTALL(){
+ARIA2_INSTALL() {
     cd $BUILD_DIR/aria2
     make install-strip
 }
 
-CLEANUP_SRC(){
+CLEANUP_SRC() {
     cd $BUILD_DIR
     rm -rf \
         zlib \
@@ -224,11 +218,11 @@ CLEANUP_SRC(){
         aria2
 }
 
-CLEANUP_LIB(){
+CLEANUP_LIB() {
     rm -rf $PREFIX
 }
 
-CLEANUP_ALL(){
+CLEANUP_ALL() {
     CLEANUP_SRC
     CLEANUP_LIB
 }
