@@ -68,8 +68,7 @@ TOOLCHAIN() {
 
 ZLIB_BUILD() {
     mkdir -p $BUILD_DIR/zlib && cd $BUILD_DIR/zlib
-    curl -Ls -o - "$ZLIB" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$ZLIB" | tar zxvf - --strip-components=1
     ./configure \
         --prefix=$PREFIX \
         --static
@@ -78,8 +77,7 @@ ZLIB_BUILD() {
 
 EXPAT_BUILD() {
     mkdir -p $BUILD_DIR/expat && cd $BUILD_DIR/expat
-    curl -Ls -o - "$EXPAT" | \
-        tar jxvf - --strip-components=1
+    curl -Ls -o - "$EXPAT" | tar jxvf - --strip-components=1
     ./configure \
         --prefix=$PREFIX \
         --enable-static \
@@ -89,8 +87,7 @@ EXPAT_BUILD() {
 
 C_ARES_BUILD() {
     mkdir -p $BUILD_DIR/c-ares && cd $BUILD_DIR/c-ares
-    curl -Ls -o - "$C_ARES" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$C_ARES" | tar zxvf - --strip-components=1
     ./configure \
         --prefix=$PREFIX \
         --enable-static \
@@ -100,8 +97,7 @@ C_ARES_BUILD() {
 
 OPENSSL_BUILD() {
     mkdir -p $BUILD_DIR/openssl && cd $BUILD_DIR/openssl
-    curl -Ls -o - "$OPENSSL" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$OPENSSL" | tar zxvf - --strip-components=1
     ./Configure \
         --prefix=$PREFIX \
         --openssldir=ssl \
@@ -113,8 +109,7 @@ OPENSSL_BUILD() {
 
 SQLITE3_BUILD() {
     mkdir -p $BUILD_DIR/sqlite3 && cd $BUILD_DIR/sqlite3
-    curl -Ls -o - "$SQLITE3" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$SQLITE3" | tar zxvf - --strip-components=1
     ./configure \
         --prefix=$PREFIX \
         --enable-static \
@@ -124,8 +119,7 @@ SQLITE3_BUILD() {
 
 LIBSSH2_BUILD() {
     mkdir -p $BUILD_DIR/libssh2 && cd $BUILD_DIR/libssh2
-    curl -Ls -o - "$LIBSSH2" | \
-        tar zxvf - --strip-components=1
+    curl -Ls -o - "$LIBSSH2" | tar zxvf - --strip-components=1
     rm -rf $PREFIX/lib/pkgconfig/libssh2.pc
     ./configure \
         --prefix=$PREFIX \
