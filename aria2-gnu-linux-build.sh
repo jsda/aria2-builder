@@ -72,7 +72,7 @@ ZLIB_BUILD() {
     ./configure \
         --prefix=$PREFIX \
         --static
-    make install
+    make install -j$(nproc)
 }
 
 EXPAT_BUILD() {
@@ -82,7 +82,7 @@ EXPAT_BUILD() {
         --prefix=$PREFIX \
         --enable-static \
         --enable-shared
-    make install
+    make install -j$(nproc)
 }
 
 C_ARES_BUILD() {
@@ -92,7 +92,7 @@ C_ARES_BUILD() {
         --prefix=$PREFIX \
         --enable-static \
         --disable-shared
-    make install
+    make install -j$(nproc)
 }
 
 OPENSSL_BUILD() {
@@ -104,7 +104,7 @@ OPENSSL_BUILD() {
         $OPENSSL_ARCH \
         no-asm \
         shared
-    make install
+    make install -j$(nproc)
 }
 
 SQLITE3_BUILD() {
@@ -114,7 +114,7 @@ SQLITE3_BUILD() {
         --prefix=$PREFIX \
         --enable-static \
         --enable-shared
-    make install
+    make install -j$(nproc)
 }
 
 LIBSSH2_BUILD() {
@@ -127,7 +127,7 @@ LIBSSH2_BUILD() {
         --disable-shared
         CPPFLAGS="-I$PREFIX/include" \
         LDFLAGS="-L$PREFIX/lib"
-    make install
+    make install -j$(nproc)
 }
 
 ARIA2_SOURCE() {
@@ -195,7 +195,7 @@ ARIA2_PACKAGE() {
 
 ARIA2_INSTALL() {
     cd $BUILD_DIR/aria2
-    make install-strip
+    make install
 }
 
 CLEANUP_SRC() {

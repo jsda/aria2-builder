@@ -45,7 +45,7 @@ jobs:
         GITHUB_REPO: jsda/aria2-builder
       run: |
         echo "======================="
-        ARIA2_VER=$(getversion aria2/aria2)
+        ARIA2_VER=$(curl -fsSL https://api.github.com/repos/aria2/aria2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')
         C_ARES="https://github.com/c-ares/c-ares/releases/download/$(curl -fsSL https://api.github.com/repos/c-ares/c-ares/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')/$(echo "$(curl -fsSL https://api.github.com/repos/c-ares/c-ares/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')" | head -n 1 | sed 's/_/./g' | sed 's/ca/c-a/g').tar.gz"
         EXPAT="https://github.com/libexpat/libexpat/releases/download/$(curl -fsSL https://api.github.com/repos/libexpat/libexpat/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')/expat-$(echo "$(curl -fsSL https://api.github.com/repos/libexpat/libexpat/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')" | head -n 1 | sed 's/_/./g' | sed 's/R.//g').tar.bz2"
         LIBSSH2="https://github.com/libssh2/libssh2/releases/download/$(curl -fsSL https://api.github.com/repos/libssh2/libssh2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g')/$(curl -fsSL https://api.github.com/repos/libssh2/libssh2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g').tar.gz"
