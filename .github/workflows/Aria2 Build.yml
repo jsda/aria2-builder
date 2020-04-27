@@ -86,10 +86,11 @@ jobs:
         TAG=$ARIA2_VER-$(date "+%Y%m%d")
         echo "::set-env name=TAG::$TAG"
         echo "::set-env name=PROFILE::$PROFILE"
-        echo "## ARIA2 HASH SHA512" > README.md
-        echo "$(sha512sum aria2c*)" >> README.md
-        sed -i "s/aria2c*/aria2-$PROFILE/g" README.md
-        zip -9 -r aria2-$PROFILE.zip aria2c* README.md
+        echo "## Aria2-$TAG SHA512" > aria2-HASH.txt
+        echo "$(sha512sum aria2c*)" >> aria2-HASH.txt
+        sed -i "s/aria2c*/aria2-$PROFILE/g" aria2-HASH.txt
+        zip -9 -r aria2-$PROFILE.zip aria2c* aria2-HASH.txt
+        mv aria2-HASH.txt README.md
         rm -rf aria2c*
         echo "======================="
         echo "======================="
