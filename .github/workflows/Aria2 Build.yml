@@ -54,13 +54,6 @@ jobs:
         LIBSSH2=https://github.com/libssh2/libssh2/releases/download/$(getversion libssh2/libssh2)/$(getversion libssh2/libssh2).tar.gz
         OPENSSL=https://www.openssl.org/source/$(curl -fsSL https://www.openssl.org/source/ | grep -o '"openssl-1.*.tar.gz"' | head -n 1 | sed 's/"//g')
         SQLITE3=https://sqlite.org/$(curl -fsSL https://sqlite.org/download.html | grep -o '..../sqlite-autoconf-.*.tar.gz' | head -n 1)
-
-
-
-
-
-
-
         echo "======================="
         echo "Aria2 $ARIA2_VER"
         echo "$PROFILE"
