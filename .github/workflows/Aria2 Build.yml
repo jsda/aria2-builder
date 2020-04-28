@@ -9,8 +9,8 @@ on:
 #      - 'diy.sh'
   schedule:
     - cron: 0 3 3 * *
-#  watch:
-#    types: [started]
+  watch:
+    types: [started]
 
 jobs:
   build:
