@@ -6,11 +6,17 @@ Aria2 static builds for GNU/Linux
 
 ![Aria2 Build](https://github.com/jsda/aria2-builder/workflows/Aria2%20Build/badge.svg?branch=master)
 
-* [Aria2 amd64](https://github.com/jsda/aria2-builder/tree/amd64/)
-* [Aria2 arm64](https://github.com/jsda/aria2-builder/tree/arm64/)
-* [Aria2 armhf](https://github.com/jsda/aria2-builder/tree/armhf/)
-* [Aria2 i386](https://github.com/jsda/aria2-builder/tree/i386/)
-* [Aria2 win64](https://github.com/jsda/aria2-builder/tree/win64/)
+## 永久下载链接，每月自动更新
+* [Aria2 amd64]
+https://github.com/jsda/aria2-builder/raw/amd64/aria2-amd64.zip
+* [Aria2 arm64]
+https://github.com/jsda/aria2-builder/raw/arm64/aria2-arm64.zip
+* [Aria2 armhf]
+https://github.com/jsda/aria2-builder/raw/armhf/aria2-armhf.zip
+* [Aria2 i386]
+https://github.com/jsda/aria2-builder/raw/i386/aria2-i386.zip
+* [Aria2 win64]
+https://github.com/jsda/aria2-builder/raw/win64/aria2-win64.zip
 
 ### Manual installation
 ```shell
