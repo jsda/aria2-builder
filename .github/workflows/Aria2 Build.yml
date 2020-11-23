@@ -67,7 +67,6 @@ jobs:
         echo "SQLITE3=$SQLITE3"
         echo "ZLIB=$ZLIB"
         echo "GITHUB_REPO=$GITHUB_REPO"
-        echo "::set-env name=GITHUB_REPO::$GITHUB_REPO"
         echo "======================="
         echo "dockerfiles也要加入相应变量"
         docker build \
@@ -82,10 +81,10 @@ jobs:
           --build-arg ZLIB=$ZLIB \
           --platform=local \
           -o ./output .
-        cd output
         TAG=$ARIA2_VER-$(date "+%Y%m%d")
-        echo "::set-env name=TAG::$TAG"
-        echo "::set-env name=PROFILE::$PROFILE"
+        echo "$ARIA2_VER-$(date "+%Y%m%d")" > TAG.txt
+        echo "$PROFILE" > PROFILE.txt
+        cd output
         echo "## Aria2-$TAG SHA512" > aria2-HASH.txt
         echo "$(sha512sum aria2c*)" >> aria2-HASH.txt
         sed -i "s/aria2c*/aria2-$PROFILE/g" aria2-HASH.txt
@@ -106,6 +105,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
+        TAG=$(cat TAG.txt)
+        PROFILE=$(cat PROFILE.txt)
         cd output
         git init
         git config user.name "actions"
