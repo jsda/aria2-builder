@@ -81,9 +81,6 @@ jobs:
           --build-arg ZLIB=$ZLIB \
           --platform=local \
           -o ./output .
-        TAG=$ARIA2_VER-$(date "+%Y%m%d")
-        echo "$ARIA2_VER-$(date "+%Y%m%d")" > TAG.txt
-        echo "$PROFILE" > PROFILE.txt
         cd output
         echo "## Aria2-$TAG SHA512" > aria2-HASH.txt
         echo "$(sha512sum aria2c*)" >> aria2-HASH.txt
@@ -105,12 +102,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
-        TAG=$(cat TAG.txt)
-        PROFILE=$(cat PROFILE.txt)
         cd output
         git init
         git config user.name "actions"
         git config user.email "actions@github.com"
         git add .
-        git commit -m "$TAG"
+        git commit -m "$(date "+%Y%m%d")"
         git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:$PROFILE
