@@ -12,6 +12,10 @@ on:
   watch:
     types: [started]
 
+env:
+  GITHUB_REPO: jsda/aria2-builder
+  ZLIB: https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -41,8 +45,6 @@ jobs:
         BUILDER_IMAGE: debian:testing
         PROFILE: ${{ matrix.PROFILE }}
         BUILD_SCRIPT: ${{ matrix.BUILD_SCRIPT }}
-        ZLIB: https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz
-        GITHUB_REPO: jsda/aria2-builder
       run: |
         getversion(){
         curl -fsSL https://api.github.com/repos/$1/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
@@ -81,6 +83,9 @@ jobs:
           --build-arg ZLIB=$ZLIB \
           --platform=local \
           -o ./output .
+        TAG=$ARIA2_VER-$(date "+%Y%m%d")
+        echo "$ARIA2_VER-$(date "+%Y%m%d")" > TAG.txt
+        echo "$PROFILE" > PROFILE.txt
         cd output
         echo "## Aria2-$TAG SHA512" > aria2-HASH.txt
         echo "$(sha512sum aria2c*)" >> aria2-HASH.txt
@@ -96,16 +101,17 @@ jobs:
         echo "======================="
         echo "$(cat README.md)"
         echo "======================="
-
     - name: Upload
       if: success()
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
+        TAG=$(cat TAG.txt)
+        PROFILE=$(cat PROFILE.txt)
         cd output
         git init
         git config user.name "actions"
         git config user.email "actions@github.com"
         git add .
-        git commit -m "$(date "+%Y%m%d")"
+        git commit -m "$TAG"
         git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:$PROFILE
