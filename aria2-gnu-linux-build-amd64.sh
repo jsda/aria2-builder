@@ -6,9 +6,9 @@
 # See /LICENSE for more information.
 #
 # https://github.com/P3TERX/Aria2-Pro-Core
-# File name: aria2-gnu-linux-cross-build-armhf.sh
-# Description: Aria2 armhf platform cross build
-# System Required: Ubuntu 14.04/16.04
+# File name: aria2-gnu-linux-build.sh
+# Description: Aria2 ard64 platform build
+# System Required: Debian & Ubuntu & Fedora & Arch Linux
 # Version: 1.6
 #
 
@@ -18,33 +18,36 @@ $SUDO echo
 SCRIPT_DIR=$(dirname $(readlink -f $0))
 
 ## CONFIG ##
-ARCH="armhf"
-HOST="arm-linux-gnueabihf"
-OPENSSL_ARCH="linux-generic32"
+ARCH="amd64"
+OPENSSL_ARCH="linux-x86_64"
 BUILD_DIR="/tmp"
 ARIA2_CODE_DIR="$BUILD_DIR/aria2"
 OUTPUT_DIR="$HOME/output"
-PREFIX="$BUILD_DIR/aria2-cross-build-libs-$ARCH"
-ARIA2_PREFIX="$HOME/aria2-local"
+PREFIX="$BUILD_DIR/aria2-build-libs"
+ARIA2_PREFIX="/usr/local"
 export CURL_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
 export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
 export LD_LIBRARY_PATH="$PREFIX/lib"
-export CC="$HOST-gcc"
-export CXX="$HOST-g++"
-export STRIP="$HOST-strip"
-export RANLIB="$HOST-ranlib"
-export AR="$HOST-ar"
-export LD="$HOST-ld"
+export CC="gcc"
+export CXX="g++"
+export STRIP="strip"
+export RANLIB="ranlib"
+export AR="ar"
+export LD="ld"
 
 ## DEPENDENCES ##
 source $SCRIPT_DIR/dependences
 
 ## TOOLCHAIN ##
-source $SCRIPT_DIR/snippet/cross-toolchain
+source $SCRIPT_DIR/snippet/target-toolchain
 
 TOOLCHAIN() {
     if [ -x "$(command -v apt-get)" ]; then
         DEBIAN_INSTALL
+    elif [ -x "$(command -v dnf)" ]; then
+        FEDORA_INSTALL
+    elif [ -x "$(command -v pacman)" ]; then
+        ARCH_INSTALL
     else
         echo -e "This operating system is not supported !"
         exit 1
@@ -52,7 +55,7 @@ TOOLCHAIN() {
 }
 
 ## BUILD ##
-source $SCRIPT_DIR/snippet/cross-build
+source $SCRIPT_DIR/snippet/target-build
 
 ## ARIA2 COEDE ##
 source $SCRIPT_DIR/snippet/aria2-code
