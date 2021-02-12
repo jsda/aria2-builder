@@ -1,10 +1,8 @@
 getversion(){
 curl -fsSL https://api.github.com/repos/$1/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
 }
-
-ARIA2_VER=$(getversion aria2/aria2)
-
-echo "ZLIB='https://www.zlib.net/zlib-1.2.11.tar.gz'
+echo "ARIA2_VER=$(getversion aria2/aria2)
+ZLIB='https://www.zlib.net/zlib-1.2.11.tar.gz'
 C_ARES=https://github.com/c-ares/c-ares/releases/download/$(getversion c-ares/c-ares)/$(echo "$(getversion c-ares/c-ares)" | head -n 1 | sed 's/_/./g' | sed 's/ca/c-a/g').tar.gz
 EXPAT=https://github.com/libexpat/libexpat/releases/download/$(getversion libexpat/libexpat)/expat-$(echo "$(getversion libexpat/libexpat)" | head -n 1 | sed 's/_/./g' | sed 's/R.//g').tar.bz2
 LIBSSH2=https://github.com/libssh2/libssh2/releases/download/$(getversion libssh2/libssh2)/$(getversion libssh2/libssh2).tar.gz
