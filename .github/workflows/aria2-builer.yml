@@ -55,7 +55,7 @@ jobs:
         ./dependences
         TAG=$ARIA2_VER-$(date "+%Y%m%d")
         echo "$ARIA2_VER-$(date "+%Y%m%d")" > TAG.txt
-        echo "$PROFILE" > PROFILE.txt
+        echo "$PLATFORMS" > PLATFORMS.txt
 
     - name: Build
       env:
@@ -92,14 +92,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
         TAG=$(cat TAG.txt)
-        PROFILE=$(cat PROFILE.txt)
+        PLATFORMS=$(cat PLATFORMS.txt)
         cd output
         git init
         git config user.name "actions"
         git config user.email "actions@github.com"
         git add .
         git commit -m "$TAG"
-        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:$PROFILE
+        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:$PLATFORMS
 
     - name: Functional Testing
       run: |
