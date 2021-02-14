@@ -13,13 +13,7 @@ set -e
 [ $EUID != 0 ] && SUDO=sudo
 $SUDO echo
 
-## DEPENDENCES ##
-#ZLIB='https://sourceforge.net/projects/libpng/files/zlib/1.2.11/zlib-1.2.11.tar.gz'
-#EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2'
-#C_ARES='https://c-ares.haxx.se/download/c-ares-1.15.0.tar.gz'
-#OPENSSL='https://www.openssl.org/source/openssl-1.1.1d.tar.gz'
-#SQLITE3='https://sqlite.org/2019/sqlite-autoconf-3300100.tar.gz'
-#LIBSSH2='https://www.libssh2.org/download/libssh2-1.9.0.tar.gz'
+./dependences
 
 ## CONFIG ##
 ARCH="mingw64"
