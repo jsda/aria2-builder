@@ -11,6 +11,7 @@ name: Aria2 Builder
 
 on:
   repository_dispatch:
+  workflow_dispatch:
   schedule:
     - cron: 0 3 3 * *
 #  watch:
