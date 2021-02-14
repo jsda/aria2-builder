@@ -10,10 +10,12 @@
 name: Aria2 Builder
 
 on:
+  repository_dispatch:
   schedule:
     - cron: 0 3 3 * *
-  watch:
-    types: [started]
+#  watch:
+#    types: [started]
+
 env:
   GITHUB_REPO: jsda/aria2-builder
 
@@ -55,7 +57,6 @@ jobs:
         ./dependences
         TAG=$ARIA2_VER-$(date "+%Y%m%d")
         echo "$ARIA2_VER-$(date "+%Y%m%d")" > TAG.txt
-        echo "$PLATFORMS" > PLATFORMS.txt
 
     - name: Build
       env:
@@ -92,14 +93,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
         TAG=$(cat TAG.txt)
-        PLATFORMS=$(cat PLATFORMS.txt)
         cd output
         git init
         git config user.name "actions"
         git config user.email "actions@github.com"
         git add .
         git commit -m "$TAG"
-        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:$PLATFORMS
+        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:${{ matrix.PLATFORMS }}
 
     - name: Functional Testing
       run: |
