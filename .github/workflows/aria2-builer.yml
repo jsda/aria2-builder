@@ -53,12 +53,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Sync Packages
-      run: |
-        ./dependences
-        TAG=$ARIA2_VER-$(date "+%Y%m%d")
-        echo "$ARIA2_VER-$(date "+%Y%m%d")" > TAG.txt
-
     - name: Build
       env:
         DOCKER_BUILDKIT: 1
@@ -93,13 +87,16 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
-        TAG=$(cat TAG.txt)
+        getversion(){
+        curl -fsSL https://api.github.com/repos/$1/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
+        }
+        ARIA2_VER=$(getversion aria2/aria2)
         cd output
         git init
         git config user.name "actions"
         git config user.email "actions@github.com"
         git add .
-        git commit -m "$TAG"
+        git commit -m "$ARIA2_VER-$(date "+%Y%m%d")"
         git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:${{ matrix.PLATFORMS }}
 
     - name: Functional Testing
@@ -114,3 +111,9 @@ jobs:
           --dht-entry-point='dht.transmissionbt.com:6881' \
           --dht-entry-point6='dht.transmissionbt.com:6881' \
           "$(curl -fsSL https://ubuntu.com/download/alternative-downloads | grep -o 'https.*server.*torrent' | head -1)" || echo "error"
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 1
+        keep_minimum_runs: 1
