@@ -131,7 +131,7 @@ LIBSSH2_BUILD() {
     make install -j$(nproc)
 }
 
-JEMALLOC_BUILD() {
+#JEMALLOC_BUILD() {
     mkdir -p $BUILD_DIR/jemalloc && cd $BUILD_DIR/jemalloc
     curl -Ls -o - "$JEMALLOC" | tar jxvf - --strip-components=1
     ./configure \
