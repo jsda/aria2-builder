@@ -9,11 +9,11 @@
 # Author: P3TERX
 # Blog: https://p3terx.com (chinese)
 #===========================================================
+
 set -e
 [ $EUID != 0 ] && SUDO=sudo
 $SUDO echo
-
-./dependences
+SCRIPT_DIR=$(dirname $(readlink -f $0))
 
 ## CONFIG ##
 ARCH="mingw64"
@@ -32,6 +32,9 @@ export STRIP="$HOST-strip"
 export RANLIB="$HOST-ranlib"
 export AR="$HOST-ar"
 export LD="$HOST-ld"
+
+## DEPENDENCES ##
+source $SCRIPT_DIR/dependences
 
 DEBIAN_INSTALL() {
     $SUDO apt-get update
@@ -132,9 +135,9 @@ LIBSSH2_BUILD() {
 }
 
 #JEMALLOC_BUILD() {
-    mkdir -p $BUILD_DIR/jemalloc && cd $BUILD_DIR/jemalloc
-    curl -Ls -o - "$JEMALLOC" | tar jxvf - --strip-components=1
-    ./configure \
+#    mkdir -p $BUILD_DIR/jemalloc && cd $BUILD_DIR/jemalloc
+#    curl -Ls -o - "$JEMALLOC" | tar jxvf - --strip-components=1
+#    ./configure \
         --host=$HOST \
         --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
         --prefix=$PREFIX \
@@ -142,9 +145,9 @@ LIBSSH2_BUILD() {
         --disable-shared \
         --disable-stats \
         --enable-prof
-    make -j$(nproc)
-    make install
-}
+#    make -j$(nproc)
+#    make install
+#}
 
 ARIA2_SOURCE() {
     [ -e $BUILD_DIR/aria2 ] && {
@@ -187,7 +190,7 @@ ARIA2_BUILD() {
         --with-libssh2 \
         --without-libgcrypt \
         --without-libnettle \
-	--with-jemalloc \
+#        --without-jemalloc \
         --with-cppunit-prefix=$PREFIX \
         ARIA2_STATIC=yes \
 	--disable-shared \
