@@ -94,6 +94,7 @@ C_ARES_BUILD() {
         --host=$HOST \
         --enable-static \
         --disable-shared
+    make -j$(nproc)
     make install -i
 }
 
@@ -102,10 +103,8 @@ OPENSSL_BUILD() {
     curl -Ls -o - "$OPENSSL" | tar zxvf - --strip-components=1
     ./Configure \
         --prefix=$PREFIX \
-        --openssldir=ssl \
         $OPENSSL_ARCH \
-        no-asm \
-        shared
+        no-tests \
     make install -i
 }
 
@@ -175,7 +174,6 @@ ARIA2_BUILD() {
         --with-libssh2 \
         --without-libgcrypt \
         --without-libnettle \
-#        --without-jemalloc \
         --with-cppunit-prefix=$PREFIX \
         ARIA2_STATIC=yes \
         --disable-shared \
