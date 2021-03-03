@@ -134,21 +134,6 @@ LIBSSH2_BUILD() {
     make install -j$(nproc)
 }
 
-#JEMALLOC_BUILD() {
-#    mkdir -p $BUILD_DIR/jemalloc && cd $BUILD_DIR/jemalloc
-#    curl -Ls -o - "$JEMALLOC" | tar jxvf - --strip-components=1
-#    ./configure \
-        --host=$HOST \
-        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
-        --prefix=$PREFIX \
-        --enable-static \
-        --disable-shared \
-        --disable-stats \
-        --enable-prof
-#    make -j$(nproc)
-#    make install
-#}
-
 ARIA2_SOURCE() {
     [ -e $BUILD_DIR/aria2 ] && {
         cd $BUILD_DIR/aria2
@@ -193,7 +178,7 @@ ARIA2_BUILD() {
 #        --without-jemalloc \
         --with-cppunit-prefix=$PREFIX \
         ARIA2_STATIC=yes \
-	--disable-shared \
+        --disable-shared \
         CPPFLAGS="-I$PREFIX/include" \
         LDFLAGS="-L$PREFIX/lib" \
         PKG_CONFIG="/usr/bin/pkg-config" \

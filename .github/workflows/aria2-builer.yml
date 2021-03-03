@@ -39,7 +39,7 @@ jobs:
           BUILDER_IMAGE: debian:10
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
         - PLATFORMS: win64
-          BUILDER_IMAGE: ubuntu:16.04
+          BUILDER_IMAGE: ubuntu:18.04
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
 
     steps:
