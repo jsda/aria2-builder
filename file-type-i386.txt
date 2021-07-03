@@ -1,0 +1,1 @@
+aria2c: ELF 32-bit LSB executable, Intel 80386, version 1 (GNU/Linux), statically linked, for GNU/Linux 3.2.0, BuildID[sha1]=bc50cf7f65a744ee713f05fdd7b7af019088e3cd, stripped
