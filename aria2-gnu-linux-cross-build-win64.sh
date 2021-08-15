@@ -98,7 +98,6 @@ C_ARES_BUILD() {
         --disable-shared \
         --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
         LIBS="-lws2_32" && \
-    make -j$(nproc)
     make install -i
 }
 
