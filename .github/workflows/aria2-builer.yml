@@ -39,7 +39,7 @@ jobs:
           BUILDER_IMAGE: debian:10
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
         - PLATFORMS: win64
-          BUILDER_IMAGE: ubuntu:18.04
+          BUILDER_IMAGE: ubuntu:20.04
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
 
     steps:
@@ -66,12 +66,6 @@ jobs:
     - name: Output Error Log
       if: (!cancelled())
       run: grep -iE 'fatal|error|critical|failure|warning' build.log
-
-    - name: Check Version
-      run: |
-        tar xzvf ./output/aria2*.tar.gz
-        file aria2c* 2>&1 | tee ./output/file-type-${{ matrix.PLATFORMS }}.txt || echo "error"
-        ./aria2c* -v 2>&1 | tee ./output/version-${{ matrix.PLATFORMS }}.txt || echo "error"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v2

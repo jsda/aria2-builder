@@ -82,7 +82,8 @@ EXPAT_BUILD() {
         --prefix=$PREFIX \
         --host=$HOST \
         --enable-static \
-        --enable-shared
+        --disable-shared \
+        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` && \
     make install -j$(nproc)
 }
 
@@ -93,7 +94,10 @@ C_ARES_BUILD() {
         --prefix=$PREFIX \
         --host=$HOST \
         --enable-static \
-        --disable-shared
+        --without-random \
+        --disable-shared \
+        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
+        LIBS="-lws2_32" && \
     make -j$(nproc)
     make install -i
 }
@@ -115,7 +119,8 @@ SQLITE3_BUILD() {
         --prefix=$PREFIX \
         --host=$HOST \
         --enable-static \
-        --enable-shared
+        --disable-shared \
+        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` && \
     make install -j$(nproc)
 }
 
@@ -127,9 +132,11 @@ LIBSSH2_BUILD() {
         --prefix=$PREFIX \
         --host=$HOST \
         --enable-static \
-        --disable-shared
-        CPPFLAGS="-I$PREFIX/include" \
-        LDFLAGS="-L$PREFIX/lib"
+        --disable-shared \
+        --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
+        --without-openssl \
+        --with-wincng \
+        LIBS="-lws2_32" && \
     make install -j$(nproc)
 }
 
@@ -165,7 +172,7 @@ ARIA2_BUILD() {
         --with-libcares \
         --without-gnutls \
         --without-wintls \
-        --with-openssl \
+        --without-openssl \
         --with-sqlite3 \
         --without-libxml2 \
         --with-libexpat \
@@ -188,9 +195,9 @@ ARIA2_PACKAGE() {
     ARIA2_VER=$(curl --silent "https://api.github.com/repos/aria2/aria2/releases/latest" | grep '"tag_name":' | sed -E 's/.*"release-([^"]+)".*/\1/')
     dpkgARCH=64bit
     cd $BUILD_DIR/aria2/src
-    strip aria2c.exe
+    $STRIP aria2c.exe
     mkdir -p $OUTPUT_DIR
-    cp aria2c.exe $OUTPUT_DIR
+    tar zcvf $OUTPUT_DIR/aria2-gnu-linux-cross-build-win64.tar.gz aria2c.exe
 }
 
 CLEANUP_SRC() {
