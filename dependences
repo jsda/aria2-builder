@@ -1,8 +1,8 @@
 ARIA2_VER=1.36.0
 ZLIB='https://www.zlib.net/zlib-1.2.11.tar.gz'
 C_ARES='https://github.com/c-ares/c-ares/releases/download/cares-1_18_1/c-ares-1.18.1.tar.gz'
-EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_4_9/expat-2.4.9.tar.bz2'
+EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_5_0/expat-2.5.0.tar.bz2'
 LIBSSH2='https://github.com/libssh2/libssh2/releases/download/libssh2-1.10.0/libssh2-1.10.0.tar.gz'
-OPENSSL='https://www.openssl.org/source/openssl-1.1.1q.tar.gz'
+OPENSSL='https://www.openssl.org/source/openssl-1.1.1s.tar.gz'
 SQLITE3='https://sqlite.org/2022/sqlite-autoconf-3390400.tar.gz'
 JEMALLOC='https://github.com/jemalloc/jemalloc/releases/download/5.3.0/jemalloc-5.3.0.tar.bz2'
