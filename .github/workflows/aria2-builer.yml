@@ -11,9 +11,6 @@ name: Aria2 Builder
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: 0 3 3 * *
-
 env:
   GITHUB_REPO: jsda/aria2-builder
 
@@ -24,20 +21,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        PLATFORMS: [amd64, arm64, armhf, i386, win64]
+        PLATFORMS: [win64]
         include:
-        - PLATFORMS: amd64
-          BUILDER_IMAGE: ubuntu:20.04
-          BUILD_SCRIPT: aria2-gnu-linux-build-amd64.sh
-        - PLATFORMS: arm64
-          BUILDER_IMAGE: ubuntu:20.04
-          BUILD_SCRIPT: aria2-gnu-linux-cross-build-arm64.sh
-        - PLATFORMS: armhf
-          BUILDER_IMAGE: ubuntu:16.04
-          BUILD_SCRIPT: aria2-gnu-linux-cross-build-armhf.sh
-        - PLATFORMS: i386
-          BUILDER_IMAGE: debian:10
-          BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
         - PLATFORMS: win64
           BUILDER_IMAGE: ubuntu:20.04
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
@@ -62,6 +47,7 @@ jobs:
           --platform=local \
           -o ./output . \
           2>&1 | tee build.log
+          pwd
 
     - name: Output Error Log
       if: (!cancelled())
@@ -72,23 +58,6 @@ jobs:
       with:
         name: aria2-${{ matrix.PLATFORMS }}
         path: output
-
-    - name: Upload
-      if: success()
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
-      run: |
-        getversion(){
-        curl -fsSL https://api.github.com/repos/$1/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
-        }
-        ARIA2_VER=$(getversion aria2/aria2)
-        cd output
-        git init
-        git config user.name "actions"
-        git config user.email "actions@github.com"
-        git add .
-        git commit -m "$ARIA2_VER-$(date "+%Y%m%d")"
-        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:${{ matrix.PLATFORMS }}
 
     - name: Functional Testing
       run: |
@@ -103,8 +72,3 @@ jobs:
           --dht-entry-point6='dht.transmissionbt.com:6881' \
           "$(curl -fsSL https://ubuntu.com/download/alternative-downloads | grep -o 'https.*server.*torrent' | head -1)" || echo "error"
 
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 1
-        keep_minimum_runs: 7
