@@ -6,7 +6,7 @@ ZLIB='https://www.zlib.net/zlib-1.2.11.tar.gz'
 C_ARES='https://github.com/c-ares/c-ares/releases/download/$(getversion c-ares/c-ares)/$(echo "$(getversion c-ares/c-ares)" | head -n 1 | sed 's/_/./g' | sed 's/ca/c-a/g').tar.gz'
 EXPAT='https://github.com/libexpat/libexpat/releases/download/$(getversion libexpat/libexpat)/expat-$(echo "$(getversion libexpat/libexpat)" | head -n 1 | sed 's/_/./g' | sed 's/R.//g').tar.bz2'
 LIBSSH2='https://github.com/libssh2/libssh2/releases/download/$(getversion libssh2/libssh2)/$(getversion libssh2/libssh2).tar.gz'
-OPENSSL='https://www.openssl.org/source/$(curl -fsSL https://www.openssl.org/source/ | grep -o '"openssl-1.*.tar.gz"' | head -n 1 | sed 's/"//g')'
+OPENSSL='https://www.openssl.org/source/$(curl -fsSL https://www.openssl.org/source/ | grep -o '"openssl-3.0.*.tar.gz"' | head -n 1 | sed 's/"//g')'
 SQLITE3='https://sqlite.org/$(curl -fsSL https://sqlite.org/download.html | grep -o '..../sqlite-autoconf-.*.tar.gz' | head -n 1)'
 JEMALLOC='https://github.com/jemalloc/jemalloc/releases/download/$(getversion jemalloc/jemalloc)/jemalloc-$(getversion jemalloc/jemalloc).tar.bz2'" > dependences
 
