@@ -10,7 +10,7 @@
 
 DEBIAN_INSTALL() {
     $SUDO apt-get update
-    $SUDO apt-get -y install build-essential git curl ca-certificates \
+    $SUDO apt-get -yqq install build-essential git curl ca-certificates \
         unzip bzip2 make binutils dpkg-dev python3-docutils \
         libgnutls28-dev nettle-dev libgmp-dev libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev gcc g++ quilt openssl libgcrypt-dev libssl-dev \
         libxml2-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool pkg-config \
