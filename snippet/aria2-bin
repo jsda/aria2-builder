@@ -19,7 +19,7 @@ ARIA2_PACKAGE() {
     cd $ARIA2_CODE_DIR/src
     $STRIP aria2c
     mkdir -p $OUTPUT_DIR
-    tar zcvf $OUTPUT_DIR/aria2-static-linux-$ARCH.tar.gz aria2c
+    mv aria2c $OUTPUT_DIR
 }
 
 ARIA2_INSTALL() {

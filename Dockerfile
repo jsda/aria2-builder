@@ -1,4 +1,4 @@
-ARG BUILDER_IMAGE=debian:10
+ARG BUILDER_IMAGE=debian:latest
 
 FROM $BUILDER_IMAGE AS builder
 

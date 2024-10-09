@@ -11,8 +11,11 @@ name: Aria2 Builder
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: 0 3 3 * *
+  push:
+  	paths:
+  		- 'dependences'
+#  schedule:
+#    - cron: 0 3 3 * *
 
 env:
   GITHUB_REPO: jsda/aria2-builder
@@ -27,19 +30,19 @@ jobs:
         PLATFORMS: [amd64, arm64, armhf, i386, win64]
         include:
         - PLATFORMS: amd64
-          BUILDER_IMAGE: ubuntu:20.04
+          BUILDER_IMAGE: ubuntu:latest
           BUILD_SCRIPT: aria2-gnu-linux-build-amd64.sh
         - PLATFORMS: arm64
-          BUILDER_IMAGE: ubuntu:20.04
+          BUILDER_IMAGE: ubuntu:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-arm64.sh
         - PLATFORMS: armhf
-          BUILDER_IMAGE: ubuntu:16.04
+          BUILDER_IMAGE: ubuntu:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-armhf.sh
         - PLATFORMS: i386
-          BUILDER_IMAGE: debian:10
+          BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
         - PLATFORMS: win64
-          BUILDER_IMAGE: ubuntu:20.04
+          BUILDER_IMAGE: ubuntu:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
 
     steps:
@@ -48,13 +51,14 @@ jobs:
       run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@master
 
     - name: Build
       env:
         DOCKER_BUILDKIT: 1
         BUILDER_IMAGE: ${{ matrix.BUILDER_IMAGE }}
         BUILD_SCRIPT: ${{ matrix.BUILD_SCRIPT }}
+        PLATFORMS: ${{ matrix.PLATFORMS }}
       run: |
         docker build \
           --build-arg BUILDER_IMAGE \
@@ -62,13 +66,19 @@ jobs:
           --platform=local \
           -o ./output . \
           2>&1 | tee build.log
+          echo "PLATFORMS=$PLATFORMS" >> $GITHUB_ENV
+          ARIA2_VER=$(grep 'ARIA2_VER=' $GITHUB_WORKSPACE/dependences | cut -d'=' -f2)
+          echo "ARIA2_VER=$ARIA2_VER" >> $GITHUB_ENV
+          cd output
+          echo "## Aria2-$ARIA2_VER SHA512" > README.md
+          echo "$(sha512sum aria2c*)" >> README.md
 
     - name: Output Error Log
       if: (!cancelled())
       run: grep -iE 'fatal|error|critical|failure|warning' build.log
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@master
       with:
         name: aria2-${{ matrix.PLATFORMS }}
         path: output
@@ -78,10 +88,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
-        getversion(){
-        curl -fsSL https://api.github.com/repos/$1/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
-        }
-        ARIA2_VER=$(getversion aria2/aria2)
         cd output
         git init
         git config user.name "actions"
@@ -94,14 +100,6 @@ jobs:
       run: |
         ./aria2c https://raw.githubusercontent.com/P3TERX/aria2.conf/master/dht.dat || echo "error"
         ./aria2c https://raw.githubusercontent.com/P3TERX/aria2.conf/master/dht6.dat || echo "error"
-        ./aria2c \
-          --seed-time=0 \
-          --enable-dht6=true \
-          --dht-file-path="$PWD/dht.dat" \
-          --dht-file-path6="$PWD/dht6.dat" \
-          --dht-entry-point='dht.transmissionbt.com:6881' \
-          --dht-entry-point6='dht.transmissionbt.com:6881' \
-          "$(curl -fsSL https://ubuntu.com/download/alternative-downloads | grep -o 'https.*server.*torrent' | head -1)" || echo "error"
 
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main

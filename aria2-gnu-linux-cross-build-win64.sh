@@ -38,10 +38,12 @@ source $SCRIPT_DIR/dependences
 
 DEBIAN_INSTALL() {
     $SUDO apt-get update
-    $SUDO apt-get -y install build-essential libgnutls28-dev nettle-dev libgmp-dev \
-    libssh2-1-dev libc-ares-dev libxml2-dev zlib1g-dev libsqlite3-dev pkg-config \
-    libcppunit-dev autoconf automake autotools-dev autopoint libtool git gcc g++ \
-    quilt openssl libgcrypt-dev libssl-dev gcc-mingw-w64 g++-mingw-w64 zip
+    $SUDO apt-get -y install \
+		make binutils autoconf automake autotools-dev libtool \
+		patch ca-certificates \
+		pkg-config git curl dpkg-dev gcc-mingw-w64 g++-mingw-w64 \
+		autopoint libcppunit-dev libxml2-dev libgcrypt20-dev lzip \
+		python3-docutils
 }
 
 FEDORA_INSTALL() {
@@ -101,16 +103,6 @@ C_ARES_BUILD() {
     make install -i
 }
 
-OPENSSL_BUILD() {
-    mkdir -p $BUILD_DIR/openssl && cd $BUILD_DIR/openssl
-    curl -Ls -o - "$OPENSSL" | tar zxvf - --strip-components=1
-    ./Configure \
-        --prefix=$PREFIX \
-        $OPENSSL_ARCH \
-        no-tests \
-    make install -i
-}
-
 SQLITE3_BUILD() {
     mkdir -p $BUILD_DIR/sqlite3 && cd $BUILD_DIR/sqlite3
     curl -Ls -o - "$SQLITE3" | tar zxvf - --strip-components=1
@@ -153,12 +145,8 @@ ARIA2_SOURCE() {
 }
 
 ARIA2_RELEASE() {
-    [ -e "$ARIA2_VER" ] ||
-        ARIA2_VER=$(curl -fsSL https://api.github.com/repos/aria2/aria2/releases | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g')
     mkdir -p $BUILD_DIR/aria2 && cd $BUILD_DIR/aria2
-    ARIA2_VER=${ARIA2_VER#*-}
-    curl -Ls -o - "https://github.com/aria2/aria2/releases/download/release-${ARIA2_VER}/aria2-${ARIA2_VER}.tar.xz" |
-        tar Jxvf - --strip-components=1
+    curl -L -s "https://github.com/aria2/aria2/releases/download/release-$ARIA2_VER/aria2-$ARIA2_VER.tar.xz" | tar -Jxvf - --strip-components=1
 }
 
 ARIA2_BUILD() {
@@ -171,7 +159,6 @@ ARIA2_BUILD() {
         --with-libcares \
         --without-gnutls \
         --without-wintls \
-        --without-openssl \
         --with-sqlite3 \
         --without-libxml2 \
         --with-libexpat \
@@ -196,7 +183,7 @@ ARIA2_PACKAGE() {
     cd $BUILD_DIR/aria2/src
     $STRIP aria2c.exe
     mkdir -p $OUTPUT_DIR
-    tar zcvf $OUTPUT_DIR/aria2-gnu-linux-cross-build-win64.tar.gz aria2c.exe
+    mv aria2c.exe $OUTPUT_DIR
 }
 
 CLEANUP_SRC() {
