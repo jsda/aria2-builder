@@ -41,6 +41,7 @@ DEBIAN_INSTALL() {
     $SUDO apt-get -y install \
 		make binutils autoconf automake autotools-dev libtool \
 		patch ca-certificates \
+		unzip bzip2 make binutils \
 		pkg-config git curl dpkg-dev gcc-mingw-w64 g++-mingw-w64 \
 		autopoint libcppunit-dev libxml2-dev libgcrypt20-dev lzip \
 		python3-docutils
@@ -125,8 +126,6 @@ LIBSSH2_BUILD() {
         --enable-static \
         --disable-shared \
         --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
-        --without-openssl \
-        --with-wincng \
         LIBS="-lws2_32" && \
     make install -j$(nproc)
 }
@@ -212,7 +211,6 @@ TOOLCHAIN
 ZLIB_BUILD
 EXPAT_BUILD
 C_ARES_BUILD
-OPENSSL_BUILD
 SQLITE3_BUILD
 LIBSSH2_BUILD
 ARIA2_BUILD

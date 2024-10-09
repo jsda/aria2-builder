@@ -85,8 +85,6 @@ jobs:
 
     - name: Upload
       if: success()
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
         cd output
         git init
@@ -94,7 +92,7 @@ jobs:
         git config user.email "actions@github.com"
         git add .
         git commit -m "$ARIA2_VER-$(date "+%Y%m%d")"
-        git push --force --quiet "https://$GITHUB_TOKEN@github.com/$GITHUB_REPO.git" HEAD:${{ matrix.PLATFORMS }}
+        git push --force --quiet HEAD:${{ matrix.PLATFORMS }}
 
     - name: Functional Testing
       run: |
