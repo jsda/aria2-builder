@@ -21,7 +21,7 @@ HOST="x86_64-w64-mingw32"
 OPENSSL_ARCH="mingw64"
 BUILD_DIR="/tmp"
 OUTPUT_DIR="$HOME/output"
-PREFIX="$BUILD_DIR/aria2-cross-build-libs-$HOST"
+PREFIX="$BUILD_DIR/aria2-cross-build-libs"
 ARIA2_PREFIX="/usr/local"
 export CURL_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
 export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
@@ -101,7 +101,7 @@ C_ARES_BUILD() {
         --disable-shared \
         --build=`dpkg-architecture -qDEB_BUILD_GNU_TYPE` \
         LIBS="-lws2_32" && \
-    make install -i
+    make install -j$(nproc)
 }
 
 SQLITE3_BUILD() {
@@ -150,7 +150,7 @@ ARIA2_RELEASE() {
 
 ARIA2_BUILD() {
     ARIA2_RELEASE || ARIA2_SOURCE
-    ./configure \
+    autoreconf -i && ./configure \
         --host=$HOST \
         --prefix=$PREFIX \
         --without-included-gettext \
@@ -173,7 +173,7 @@ ARIA2_BUILD() {
         LDFLAGS="-L$PREFIX/lib" \
         PKG_CONFIG="/usr/bin/pkg-config" \
         PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
-    make
+    make -j1
 }
 
 ARIA2_PACKAGE() {

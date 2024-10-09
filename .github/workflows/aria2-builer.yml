@@ -30,19 +30,19 @@ jobs:
         PLATFORMS: [amd64, arm64, armhf, i386, win64]
         include:
         - PLATFORMS: amd64
-          BUILDER_IMAGE: ubuntu:latest
+          BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-build-amd64.sh
         - PLATFORMS: arm64
-          BUILDER_IMAGE: ubuntu:latest
+          BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-arm64.sh
         - PLATFORMS: armhf
-          BUILDER_IMAGE: ubuntu:latest
+          BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-armhf.sh
         - PLATFORMS: i386
           BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
         - PLATFORMS: win64
-          BUILDER_IMAGE: ubuntu:latest
+          BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
 
     steps:
@@ -92,7 +92,7 @@ jobs:
         git config user.email "actions@github.com"
         git add .
         git commit -m "$ARIA2_VER-$(date "+%Y%m%d")"
-        git push --force --quiet HEAD:${{ matrix.PLATFORMS }}
+        git push --force --quiet origin HEAD:${{ matrix.PLATFORMS }}
 
     - name: Functional Testing
       run: |
