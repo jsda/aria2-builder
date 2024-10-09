@@ -85,7 +85,8 @@ jobs:
 
     - name: Upload
       if: success()
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd output
         git init
