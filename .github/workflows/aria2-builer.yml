@@ -12,8 +12,8 @@ name: Aria2 Builder
 on:
   workflow_dispatch:
   push:
-  	paths:
-  		- 'dependences'
+    paths:
+      - 'dependences'
 #  schedule:
 #    - cron: 0 3 3 * *
 
