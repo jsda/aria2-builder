@@ -12,7 +12,7 @@ DEBIAN_INSTALL() {
     $SUDO apt-get update
     $SUDO apt-get -yqq install build-essential git curl ca-certificates \
         unzip bzip2 make binutils dpkg-dev python3-docutils \
-        libgnutls28-dev nettle-dev libgmp-dev libxml2-dev gcc g++ quilt libgcrypt-dev \
+        libgnutls28-dev nettle-dev libgmp-dev libxml2-dev gcc g++ quilt libgcrypt-dev docbook2x gawk \
         libxml2-dev libcppunit-dev autoconf automake autotools-dev autopoint libtool pkg-config
 }
 

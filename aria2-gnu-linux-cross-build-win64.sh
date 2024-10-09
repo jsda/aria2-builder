@@ -42,7 +42,7 @@ DEBIAN_INSTALL() {
 		make binutils autoconf automake autotools-dev libtool \
 		patch ca-certificates \
 		unzip bzip2 make binutils \
-		libgnutls28-dev nettle-dev libgmp-dev libxml2-dev gcc g++ quilt libgcrypt-dev libssl-dev \
+		libgnutls28-dev nettle-dev libgmp-dev libxml2-dev gcc g++ quilt libgcrypt-dev libssl-dev docbook2x gawk \
 		pkg-config git curl dpkg-dev gcc-mingw-w64 g++-mingw-w64 \
 		autopoint libcppunit-dev libxml2-dev libgcrypt20-dev lzip \
 		python3-docutils
@@ -151,7 +151,7 @@ ARIA2_RELEASE() {
 
 ARIA2_BUILD() {
     ARIA2_RELEASE || ARIA2_SOURCE
-    autoreconf -i && ./configure \
+    ./configure \
         --host=$HOST \
         --prefix=$PREFIX \
         --without-included-gettext \
@@ -175,7 +175,7 @@ ARIA2_BUILD() {
         LDFLAGS="-L$PREFIX/lib" \
         PKG_CONFIG="/usr/bin/pkg-config" \
         PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
-    make -j$(nproc)
+    make -j1
 }
 
 ARIA2_PACKAGE() {

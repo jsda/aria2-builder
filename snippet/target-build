@@ -95,7 +95,8 @@ JEMALLOC_BUILD() {
 ARIA2_BUILD() {
     ARIA2_CODE_GET
     ./configure \
-        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
+        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
+        --prefix=${ARIA2_PREFIX:-'/usr/local'} \
         --with-libz \
         --with-libcares \
         --with-libexpat \
@@ -111,5 +112,5 @@ ARIA2_BUILD() {
         --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
         ARIA2_STATIC=yes \
         --disable-shared
-    make -j$(nproc)
+    make -j1
 }
