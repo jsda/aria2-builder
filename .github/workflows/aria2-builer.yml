@@ -72,6 +72,8 @@ jobs:
           cd output
           echo "## Aria2-$ARIA2_VER SHA512" > README.md
           echo "$(sha512sum aria2c*)" >> README.md
+          zip -9 -r aria2-$PROFILE.zip aria2c*
+          rm -rf aria2c*
 
     - name: Output Error Log
       if: (!cancelled())
