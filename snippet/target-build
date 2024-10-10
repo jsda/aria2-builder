@@ -50,9 +50,8 @@ OPENSSL_BUILD() {
     ./Configure \
         --prefix=$PREFIX \
         --no-shared \
-        --enable-static \
-        --enable-fips
-    make -j$(nproc)
+        --enable-static
+    make -j1
     make install_sw
 }
 
@@ -101,17 +100,17 @@ ARIA2_BUILD() {
         --with-libz \
         --with-libcares \
         --with-libexpat \
-        --without-libxml2 \
-        --without-libgcrypt \
+        --with-libxml2 \
+        --with-libgcrypt \
         --with-openssl \
-        --without-libnettle \
+        --with-libnettle \
         --without-gnutls \
-        --without-libgmp \
+        --with-libgmp \
         --with-libssh2 \
         --with-sqlite3 \
         --without-jemalloc \
         --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
         ARIA2_STATIC=yes \
         --disable-shared
-    make -j1
+    make -j$(nproc)
 }

@@ -179,7 +179,6 @@ ARIA2_BUILD() {
 }
 
 ARIA2_PACKAGE() {
-    ARIA2_VER=$(curl --silent "https://api.github.com/repos/aria2/aria2/releases/latest" | grep '"tag_name":' | sed -E 's/.*"release-([^"]+)".*/\1/')
     dpkgARCH=64bit
     cd $BUILD_DIR/aria2/src
     $STRIP aria2c.exe
