@@ -112,5 +112,5 @@ ARIA2_BUILD() {
         --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
         ARIA2_STATIC=yes \
         --disable-shared
-    make -j$(nproc)
+    make -j1
 }
