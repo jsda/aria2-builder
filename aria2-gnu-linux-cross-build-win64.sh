@@ -168,7 +168,6 @@ ARIA2_BUILD() {
         --with-libssh2 \
         --without-libgcrypt \
         --without-libnettle \
-        --with-cppunit-prefix=$PREFIX \
         ARIA2_STATIC=yes \
         --disable-shared \
         CPPFLAGS="-I$PREFIX/include" \

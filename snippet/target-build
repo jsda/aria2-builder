@@ -49,9 +49,9 @@ OPENSSL_BUILD() {
     curl -Ls -o - "$OPENSSL" | tar zxvf - --strip-components=1
     ./Configure \
         --prefix=$PREFIX \
-        --no-shared \
-        --enable-static
-    make -j1
+        $OPENSSL_ARCH \
+        no-tests
+    make -j$(nproc)
     make install_sw
 }
 
