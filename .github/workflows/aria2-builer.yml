@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        PLATFORMS: [amd64, arm64, armhf, i386, win64]
+        PLATFORMS: [amd64, arm64, armhf, i386]
         include:
         - PLATFORMS: amd64
           BUILDER_IMAGE: debian:latest
@@ -41,9 +41,6 @@ jobs:
         - PLATFORMS: i386
           BUILDER_IMAGE: debian:latest
           BUILD_SCRIPT: aria2-gnu-linux-cross-build-i386.sh
-        - PLATFORMS: win64
-          BUILDER_IMAGE: debian:latest
-          BUILD_SCRIPT: aria2-gnu-linux-cross-build-win64.sh
 
     steps:
 
