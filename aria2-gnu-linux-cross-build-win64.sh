@@ -64,6 +64,30 @@ source $SCRIPT_DIR/snippet/aria2-bin
 ## CLEAN ##
 source $SCRIPT_DIR/snippet/clean
 
+ARIA2_BUILD-win() {
+    ARIA2_CODE_GET
+    ./configure \
+        --host=$HOST \
+        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
+        --without-included-gettext \
+        --disable-nls \
+        --with-libcares \
+        --without-gnutls \
+        --without-openssl \
+        --without-wintls \
+        --with-sqlite3 \
+        --without-libxml2 \
+        --with-libexpat \
+        --with-libz \
+        --without-libgmp \
+        --with-libssh2 \
+        --without-libgcrypt \
+        --without-libnettle \
+        ARIA2_STATIC=yes \
+        --disable-shared \
+    make -j1
+}
+
 ARIA2_PACKAGE-win() {
     dpkgARCH=64bit
     cd $BUILD_DIR/aria2/src
@@ -82,7 +106,7 @@ C_ARES_BUILD
 SQLITE3_BUILD
 LIBSSH2_BUILD
 #JEMALLOC_BUILD
-ARIA2_BUILD
+ARIA2_BUILD-win
 #ARIA2_BIN
 ARIA2_PACKAGE-win
 #ARIA2_INSTALL
