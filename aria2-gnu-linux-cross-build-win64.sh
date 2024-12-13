@@ -88,7 +88,7 @@ source $SCRIPT_DIR/snippet/clean
 
 GMP_BUILD() {
     mkdir -p $BUILD_DIR/gmp && cd $BUILD_DIR/gmp
-    curl -Ls -o - "$GMP_VER" | tar xJf - --strip-components=1
+    curl -Ls -o - "$GMP_VER" | tar Jxvf - --strip-components=1
     ./configure \
         --disable-shared \
         --enable-static \
