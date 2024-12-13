@@ -34,6 +34,9 @@ export STRIP="$HOST-strip"
 export RANLIB="$HOST-ranlib"
 export AR="$HOST-ar"
 export LD="$HOST-ld"
+export CPPFLAGS="-I$PREFIX/include"
+export LDFLAGS="-L$PREFIX/lib"
+export PKG_CONFIG="/usr/bin/pkg-config"
 
 ## DEPENDENCES ##
 source $SCRIPT_DIR/dependences
@@ -43,7 +46,6 @@ DEBIAN_INSTALL() {
     $SUDO apt-get -yqq install \
 		make binutils autoconf automake autotools-dev libtool \
 		patch ca-certificates \
-		unzip bzip2 make binutils \
 		libgnutls28-dev nettle-dev libgmp-dev libxml2-dev gcc g++ quilt libgcrypt-dev libssl-dev docbook2x gawk \
 		pkg-config git curl dpkg-dev gcc-mingw-w64 g++-mingw-w64 \
 		autopoint libcppunit-dev libxml2-dev libgcrypt20-dev lzip \
@@ -84,6 +86,20 @@ source $SCRIPT_DIR/snippet/aria2-bin
 ## CLEAN ##
 source $SCRIPT_DIR/snippet/clean
 
+GMP_BUILD() {
+    mkdir -p $BUILD_DIR/gmp && cd $BUILD_DIR/gmp
+    curl -Ls -o - "$GMP_VER" | tar xJf - --strip-components=1
+    ./configure \
+        --disable-shared \
+        --enable-static \
+        --prefix=$PREFIX \
+        --host=$HOST \
+        --disable-cxx \
+        --enable-fat \
+        CFLAGS="-mtune=generic -O2 -g0" && \
+    make -j$(nproc) install
+}
+
 ARIA2_BUILD() {
     ARIA2_CODE_GET
     ./configure \
@@ -119,6 +135,7 @@ ARIA2_PACKAGE() {
 TOOLCHAIN
 #OPENSSL_BUILD
 #ln -s $PREFIX/lib64 $PREFIX/lib
+GMP_BUILD
 ZLIB_BUILD
 EXPAT_BUILD
 C_ARES_BUILD
