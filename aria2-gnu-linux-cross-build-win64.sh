@@ -68,13 +68,12 @@ ARIA2_BUILD-win() {
     ARIA2_CODE_GET
     ./configure \
         --host=$HOST \
-        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
+        --prefix=$$PREFIX \
         --without-included-gettext \
         --disable-nls \
         --with-libcares \
         --without-gnutls \
         --without-openssl \
-        --without-wintls \
         --with-sqlite3 \
         --without-libxml2 \
         --with-libexpat \
@@ -83,9 +82,9 @@ ARIA2_BUILD-win() {
         --with-libssh2 \
         --without-libgcrypt \
         --without-libnettle \
+        --with-cppunit-prefix=$PREFIX \
         ARIA2_STATIC=yes \
-        --disable-shared \
-    make -j1
+     make -j$(nproc)
 }
 
 ARIA2_PACKAGE-win() {
