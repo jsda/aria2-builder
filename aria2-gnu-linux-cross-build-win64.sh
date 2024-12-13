@@ -52,28 +52,6 @@ DEBIAN_INSTALL() {
 		python3-docutils
 }
 
-FEDORA_INSTALL() {
-    $SUDO dnf install -y make gcc gcc-c++ kernel-devel libgcrypt-devel git curl ca-certificates bzip2 xz findutils \
-        libxml2-devel cppunit autoconf automake gettext-devel libtool pkg-config dpkg
-}
-
-ARCH_INSTALL() {
-    $SUDO pacman -Syu --noconfirm base-devel git dpkg
-}
-
-TOOLCHAIN() {
-    if [ -x "$(command -v apt-get)" ]; then
-        DEBIAN_INSTALL
-    elif [ -x "$(command -v dnf)" ]; then
-        FEDORA_INSTALL
-    elif [ -x "$(command -v pacman)" ]; then
-        ARCH_INSTALL
-    else
-        echo -e "This operating system is not supported !"
-        exit 1
-    fi
-}
-
 ## BUILD ##
 source $SCRIPT_DIR/snippet/cross-build
 
@@ -132,7 +110,7 @@ ARIA2_PACKAGE() {
     mv aria2c.exe $OUTPUT_DIR
 }
 
-TOOLCHAIN
+DEBIAN_INSTALL
 #OPENSSL_BUILD
 #ln -s $PREFIX/lib64 $PREFIX/lib
 GMP_BUILD
