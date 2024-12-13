@@ -8,7 +8,7 @@ COPY . .
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG BUILD_SCRIPT=aria2-gnu-linux-build.sh
+ARG BUILD_SCRIPT=aria2-gnu-linux-build-amd64.sh
 
 RUN bash $BUILD_SCRIPT
 

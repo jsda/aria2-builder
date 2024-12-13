@@ -50,7 +50,9 @@ OPENSSL_BUILD() {
     ./Configure \
         --prefix=$PREFIX \
         $OPENSSL_ARCH \
-        no-tests
+        no-tests \
+        no-shared \
+        no-module
     make -j$(nproc)
     make install_sw
 }
@@ -74,6 +76,7 @@ LIBSSH2_BUILD() {
         --prefix=$PREFIX \
         --enable-static \
         --disable-shared \
+        --with-crypto=openssl \
         --disable-examples-build
     make -j$(nproc)
     make install
@@ -95,22 +98,21 @@ JEMALLOC_BUILD() {
 ARIA2_BUILD() {
     ARIA2_CODE_GET
     ./configure \
-        --build=$(dpkg-architecture -qDEB_BUILD_GNU_TYPE) \
-        --prefix=${ARIA2_PREFIX:-'/usr/local'} \
+        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
         --with-libz \
         --with-libcares \
         --with-libexpat \
-        --with-libxml2 \
-        --with-libgcrypt \
+        --without-libxml2 \
+        --without-libgcrypt \
         --with-openssl \
-        --with-libnettle \
+        --without-libnettle \
         --without-gnutls \
-        --with-libgmp \
+        --without-libgmp \
         --with-libssh2 \
         --with-sqlite3 \
         --without-jemalloc \
         --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt' \
         ARIA2_STATIC=yes \
         --disable-shared
-    make -j1
+    make -j$(nproc)
 }

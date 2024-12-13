@@ -29,6 +29,7 @@ ARIA2_PREFIX="$HOME/aria2-local"
 export CURL_CA_BUNDLE="/etc/ssl/certs/ca-certificates.crt"
 export PKG_CONFIG_PATH="$PREFIX/lib/pkgconfig"
 export LD_LIBRARY_PATH="$PREFIX/lib"
+export CFLAGS+=" -flto -O3"
 export CC="$HOST-gcc"
 export CXX="$HOST-g++"
 export STRIP="$HOST-strip"
@@ -69,17 +70,14 @@ source $SCRIPT_DIR/snippet/clean
 
 ## BUILD PROCESS ##
 TOOLCHAIN
+OPENSSL_BUILD
 ZLIB_BUILD
 EXPAT_BUILD
 C_ARES_BUILD
-OPENSSL_BUILD
 SQLITE3_BUILD
 LIBSSH2_BUILD
-#JEMALLOC_BUILD
 ARIA2_BUILD
-#ARIA2_BIN
 ARIA2_PACKAGE
-#ARIA2_INSTALL
 CLEANUP_ALL
 
 echo "finished!"
