@@ -53,7 +53,7 @@ DEBIAN_INSTALL() {
 }
 
 ## BUILD ##
-source $SCRIPT_DIR/snippet/cross-build
+source $SCRIPT_DIR/snippet/cross-build-win
 
 ## ARIA2 COEDE ##
 source $SCRIPT_DIR/snippet/aria2-code
@@ -64,45 +64,7 @@ source $SCRIPT_DIR/snippet/aria2-bin
 ## CLEAN ##
 source $SCRIPT_DIR/snippet/clean
 
-GMP_BUILD() {
-    mkdir -p $BUILD_DIR/gmp && cd $BUILD_DIR/gmp
-    curl -Ls -o - "$GMP_VER" | tar Jxvf - --strip-components=1
-    ./configure \
-        --disable-shared \
-        --enable-static \
-        --prefix=$PREFIX \
-        --host=$HOST \
-        --disable-cxx \
-        --enable-fat \
-        CFLAGS="-mtune=generic -O2 -g0" && \
-    make -j$(nproc) install
-}
-
-ARIA2_BUILD() {
-    ARIA2_CODE_GET
-    ./configure \
-        --host=$HOST \
-        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
-        --without-included-gettext \
-        --disable-nls \
-        --with-libcares \
-        --without-gnutls \
-        --without-openssl \
-        --without-wintls \
-        --with-sqlite3 \
-        --without-libxml2 \
-        --with-libexpat \
-        --with-libz \
-        --without-libgmp \
-        --with-libssh2 \
-        --without-libgcrypt \
-        --without-libnettle \
-        ARIA2_STATIC=yes \
-        --disable-shared \
-    make -j1
-}
-
-ARIA2_PACKAGE() {
+ARIA2_PACKAGE-win() {
     dpkgARCH=64bit
     cd $BUILD_DIR/aria2/src
     $STRIP aria2c.exe
@@ -122,7 +84,7 @@ LIBSSH2_BUILD
 #JEMALLOC_BUILD
 ARIA2_BUILD
 #ARIA2_BIN
-ARIA2_PACKAGE
+ARIA2_PACKAGE-win
 #ARIA2_INSTALL
 CLEANUP_ALL
 

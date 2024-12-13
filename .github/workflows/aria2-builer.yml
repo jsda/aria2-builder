@@ -14,8 +14,8 @@ on:
   push:
     paths:
       - '*dependences*'
-#  schedule:
-#    - cron: 0 3 3 * *
+  schedule:
+    - cron: 10 2 * * 5
 
 env:
   GITHUB_REPO: jsda/aria2-builder
