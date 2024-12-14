@@ -8,5 +8,4 @@ EXPAT='https://github.com/libexpat/libexpat/releases/download/$(getversion libex
 LIBSSH2='https://github.com/libssh2/libssh2/releases/download/$(getversion libssh2/libssh2)/$(getversion libssh2/libssh2).tar.gz'
 OPENSSL='https://github.com/openssl/openssl/releases/download/$(getversion openssl/openssl)/$(getversion openssl/openssl).tar.gz'
 SQLITE3='https://sqlite.org/$(curl -fsSL https://sqlite.org/download.html | grep -o '..../sqlite-autoconf-.*.tar.gz' | head -n 1)'
-GMP_VER='$(curl -s https://gmplib.org | grep -oP 'href="//gmplib\.org/download/gmp/gmp-\d.*\.tar\.xz"' | head -n 1 | sed 's|href="//|https://|; s|"||')'
 JEMALLOC='https://github.com/jemalloc/jemalloc/releases/download/$(getversion jemalloc/jemalloc)/jemalloc-$(getversion jemalloc/jemalloc).tar.bz2'" > dependences
