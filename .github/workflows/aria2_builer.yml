@@ -14,7 +14,7 @@ on:
   workflow_run:
     workflows: ["Merge-upstream"]
     types:
-      - completed
+      - success
 #  push:
 #    paths:
 #      - '*dependences*'
