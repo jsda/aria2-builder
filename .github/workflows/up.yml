@@ -11,15 +11,13 @@ name: Merge-upstream
 on:
   workflow_dispatch:
   schedule:
-    - cron: 5 9 * * 5
+    - cron: 10 2 * * 5
 
 jobs:
   merge:
-
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Checkout
       uses: actions/checkout@master
       with:
@@ -28,9 +26,14 @@ jobs:
         lfs: true
 
     - name: Update
+      id: update
       run: |
         ./up.sh
         git config --global user.email "actions@github.com"
         git config --global user.name "actions"
         ARIA2_VER=$(grep 'ARIA2_VER=' $GITHUB_WORKSPACE/dependences | cut -d'=' -f2)
-        git add . && git commit -m "$ARIA2_VER-$(date "+%Y%m%d")" && git push && echo "更新完毕!!!" >> $GITHUB_STEP_SUMMARY || echo "暂无更新!!!" >> $GITHUB_STEP_SUMMARY
+        git add . && git commit -m "$ARIA2_VER-$(date "+%Y%m%d")" && git push && echo "up=true" >> $GITHUB_OUTPUT || echo "up=false" >> $GITHUB_OUTPUT
+
+    - name: Compare files
+      if: ${{ steps.update.outputs.up != 'false' }}
+      uses: ./.github/workflows/aria2-builer.yml
