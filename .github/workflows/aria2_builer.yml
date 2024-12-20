@@ -11,15 +11,11 @@ name: Aria2 Builder
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Merge-upstream"]
-    types:
-      - success
 #  push:
 #    paths:
 #      - '*dependences*'
-#  schedule:
-#    - cron: 15 2 * * 5
+  schedule:
+    - cron: 15 2 * * 5
 
 env:
   GITHUB_REPO: jsda/aria2-builder
