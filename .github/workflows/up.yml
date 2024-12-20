@@ -36,4 +36,4 @@ jobs:
 
     - name: Compare files
       if: ${{ steps.update.outputs.up != 'false' }}
-      uses: ./.github/workflows/aria2-builer.yml
+      uses: ./.github/workflows/aria2_builer.yml
