@@ -32,9 +32,10 @@ jobs:
         git config --global user.email "actions@github.com"
         git config --global user.name "actions"
         ARIA2_VER=$(grep 'ARIA2_VER=' $GITHUB_WORKSPACE/dependences | cut -d'=' -f2)
-        git add . && git commit -m "$ARIA2_VER-$(date "+%Y%m%d")" && git push && echo "up=true" >> $GITHUB_ENV || echo "up=false" >> $GITHUB_ENV
+        git add . && git commit -m "$ARIA2_VER-$(date "+%Y%m%d")"
 
-    - name: Compare files
-      if: ${{ env.up != 'false' }}
-      run: |
-        echo "true"
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 3
+        keep_minimum_runs: 3
