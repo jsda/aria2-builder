@@ -28,9 +28,21 @@ jobs:
         lfs: true
 
     - name: Update
+      id: compare
       run: |
         ./up.sh
         git config --global user.email "actions@github.com"
         git config --global user.name "actions"
-        ARIA2_VER=$(grep 'ARIA2_VER=' $GITHUB_WORKSPACE/dependences | cut -d'=' -f2)
-        git add . && git commit -m "$ARIA2_VER-$(date "+%Y%m%d")" && git push && echo "更新完毕!!!" >> $GITHUB_STEP_SUMMARY || echo "暂无更新!!!" >> $GITHUB_STEP_SUMMARY
+        ARIA2_V=$(grep 'ARIA2_VER=' $GITHUB_WORKSPACE/dependences | cut -d'=' -f2)-$(date "+%Y%m%d")
+        echo "ARIA2_VER=$ARIA2_VER" >> $GITHUB_ENV
+        echo "V_ER=$(cat $GITHUB_WORKSPACE/dependences)" >> $GITHUB_ENV
+        git add . && git commit -m "$ARIA2_V" && git push && echo "skip=false" >> $GITHUB_OUTPUT || echo "skip=true" >> $GITHUB_OUTPUT
+      - name: Release Firmware
+        if: ${{ steps.compare.outputs.skip != 'true' }}
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: ${{env.ARIA2_V}}
+          body_path: ${{ github.workspace }}/dependences
+          body: |
+            版本依赖：
+            ${{env.V_ER}}
