@@ -11,8 +11,6 @@ name: Aria2 Builder
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
   schedule:
     - cron: 10 2 * * 5
 
