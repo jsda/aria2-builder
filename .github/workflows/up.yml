@@ -17,9 +17,7 @@ jobs:
   merge:
 
     runs-on: ubuntu-latest
-
     steps:
-
     - name: Checkout
       uses: actions/checkout@master
       with:
@@ -37,6 +35,7 @@ jobs:
         echo "ARIA2_VER=$ARIA2_VER" >> $GITHUB_ENV
         echo "V_ER=$(cat $GITHUB_WORKSPACE/dependences)" >> $GITHUB_ENV
         git add . && git commit -m "$ARIA2_V" && git push && echo "skip=false" >> $GITHUB_OUTPUT || echo "skip=true" >> $GITHUB_OUTPUT
+
       - name: Release Firmware
         if: ${{ steps.compare.outputs.skip != 'true' }}
         uses: softprops/action-gh-release@master
