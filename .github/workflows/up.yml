@@ -32,7 +32,7 @@ jobs:
         git config --global user.email "actions@github.com"
         git config --global user.name "actions"
         ARIA2_V=$(grep 'ARIA2_VER=' $GITHUB_WORKSPACE/dependences | cut -d'=' -f2)-$(date "+%Y%m%d")
-        echo "ARIA2_VER=$ARIA2_VER" >> $GITHUB_ENV
+        echo "ARIA2_V=$ARIA2_V" >> $GITHUB_ENV
         echo "V_ER=$(cat $GITHUB_WORKSPACE/dependences)" >> $GITHUB_ENV
         git add . && git commit -m "$ARIA2_V" && git push && echo "skip=false" >> $GITHUB_OUTPUT || echo "skip=true" >> $GITHUB_OUTPUT
 
