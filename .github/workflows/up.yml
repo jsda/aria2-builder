@@ -36,12 +36,12 @@ jobs:
         echo "V_ER=$(cat $GITHUB_WORKSPACE/dependences)" >> $GITHUB_ENV
         git add . && git commit -m "$ARIA2_V" && git push && echo "skip=false" >> $GITHUB_OUTPUT || echo "skip=true" >> $GITHUB_OUTPUT
 
-      - name: Release Firmware
-        if: ${{ steps.compare.outputs.skip != 'true' }}
-        uses: softprops/action-gh-release@master
-        with:
-          tag_name: ${{env.ARIA2_V}}
-          body_path: ${{ github.workspace }}/dependences
-          body: |
-            版本依赖：
-            ${{env.V_ER}}
+    - name: Release Firmware
+      if: ${{ steps.compare.outputs.skip != 'true' }}
+      uses: softprops/action-gh-release@master
+      with:
+        tag_name: ${{env.ARIA2_V}}
+        body_path: ${{ github.workspace }}/dependences
+        body: |
+          版本依赖：
+          ${{env.V_ER}}
