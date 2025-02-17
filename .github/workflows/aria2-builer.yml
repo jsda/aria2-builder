@@ -96,9 +96,3 @@ jobs:
       run: |
         ./aria2c https://raw.githubusercontent.com/P3TERX/aria2.conf/master/dht.dat || echo "error"
         ./aria2c https://raw.githubusercontent.com/P3TERX/aria2.conf/master/dht6.dat || echo "error"
-
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 1
-        keep_minimum_runs: 7

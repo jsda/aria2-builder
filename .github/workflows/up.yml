@@ -45,3 +45,9 @@ jobs:
         body: |
           版本依赖：
           ${{env.V_ER}}
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 8
+        keep_minimum_runs: 2
