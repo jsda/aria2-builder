@@ -64,7 +64,7 @@ SQLITE3_BUILD() {
         --prefix=$PREFIX \
         --enable-static \
         --disable-shared \
-        --disable-dynamic-extensions
+        --disable-load-extension
     make -j$(nproc)
     make install
 }
@@ -98,7 +98,7 @@ JEMALLOC_BUILD() {
 ARIA2_BUILD() {
     ARIA2_CODE_GET
     ./configure \
-        --prefix=${ARIA2_PREFIX:-'/usr/loacl'} \
+        --prefix=${ARIA2_PREFIX:-'/usr/local'} \
         --with-libz \
         --with-libcares \
         --with-libexpat \

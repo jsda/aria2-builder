@@ -35,6 +35,7 @@ export STRIP="strip"
 export RANLIB="ranlib"
 export AR="ar"
 export LD="ld"
+export PKG_CONFIG_LIBDIR="$PKG_CONFIG_PATH"
 
 ## DEPENDENCES ##
 source $SCRIPT_DIR/dependences
