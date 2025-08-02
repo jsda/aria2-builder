@@ -12,7 +12,7 @@ name: Aria2 Builder
 on:
   workflow_dispatch:
   schedule:
-    - cron: 10 2 * * 5
+    - cron: 10 1 * * 5
 
 env:
   GITHUB_REPO: jsda/aria2-builder
