@@ -1,5 +1,5 @@
 getversion(){
-curl -H "Authorization: Bearer $GITHUB_TOKEN" -s https://api.github.com/repos/$1/releases/latest | jq -r '.tag_name' | cut -c 2-
+curl -H "Authorization: Bearer $GITHUB_TOKEN" -s https://api.github.com/repos/$1/releases/latest | grep -o '"tag_name": ".*"' | head -n 1 | sed 's/"//g;s/v//g' | sed 's/tag_name: //g' | sed 's/release-//g'
 }
 echo "ARIA2_VER=$(getversion aria2/aria2)
 ZLIB='https://github.com/madler/zlib/releases/download/v$(getversion madler/zlib)/zlib-$(getversion madler/zlib).tar.gz'
