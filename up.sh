@@ -1,5 +1,5 @@
 getversion(){
-curl -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' -s https://api.github.com/repos/$1/releases/latest | jq -r '.tag_name' | cut -c 2-
+curl -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -s https://api.github.com/repos/$1/releases/latest | jq -r '.tag_name' | cut -c 2-
 }
 echo "ARIA2_VER=$(getversion aria2/aria2)
 ZLIB='https://github.com/madler/zlib/releases/download/v$(getversion madler/zlib)/zlib-$(getversion madler/zlib).tar.gz'
