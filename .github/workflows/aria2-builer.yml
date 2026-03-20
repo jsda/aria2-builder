@@ -84,7 +84,7 @@ jobs:
     - name: Upload
       if: success()
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
         GITHUB_REPO: jsda/aria2-builder
       run: |
         cd output
