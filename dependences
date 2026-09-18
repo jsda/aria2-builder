@@ -5,4 +5,4 @@ EXPAT='https://github.com/libexpat/libexpat/releases/download/R_2_8_4/expat-2.8.
 LIBSSH2='https://github.com/libssh2/libssh2/releases/download/libssh2-1.11.1/libssh2-1.11.1.tar.gz'
 OPENSSL=https://github.com/openssl/openssl/releases/download/openssl-3.5.8/openssl-3.5.8.tar.gz
 SQLITE3='https://sqlite.org/2026/sqlite-autoconf-3530400.tar.gz'
-JEMALLOC='https://github.com/jemalloc/jemalloc/releases/download/5.3.1/jemalloc-5.3.1.tar.bz2'
+JEMALLOC='https://github.com/jemalloc/jemalloc/releases/download/5.4.0/jemalloc-5.4.0.tar.bz2'
